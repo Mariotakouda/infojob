@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Notifications\TwoFactorCodeNotification;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
+
+class TwoFactorController extends Controller
+{
+    public function show(): View
+    {
+        return view('auth.two-factor');
+    }
+
+    public function resend(Request $request): RedirectResponse
+    {
+        $this->generateAndSendCode($request->user());
+        return back()->with('status', 'Un nouveau code vous a été envoyé par email.');
+    }
+
+    public function verify(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'code' => ['required', 'string', 'size:6'],
+        ], [
+            'code.required' => 'Veuillez saisir le code reçu par email.',
+            'code.size'     => 'Le code doit contenir exactement 6 chiffres.',
+        ]);
+
+        $user = $request->user();
+
+        if (! $user->two_factor_expires_at || now()->gt($user->two_factor_expires_at)) {
+            return back()->withErrors(['code' => 'Ce code a expiré. Demandez-en un nouveau.']);
+        }
+
+        if (! Hash::check($request->code, $user->two_factor_code)) {
+            return back()->withErrors(['code' => 'Code incorrect. Vérifiez votre email et réessayez.']);
+        }
+
+        $user->update([
+            'two_factor_code'       => null,
+            'two_factor_expires_at' => null,
+        ]);
+
+        $request->session()->put('two_factor_verified', true);
+
+        // Redirection selon le rôle après validation 2FA
+        return match ($user->role) {
+            'admin'     => redirect()->route('admin.index'),
+            'recruteur' => redirect()->route('dashboard'),
+            default     => redirect()->route('job-offers.index'),
+        };
+    }
+
+    public static function generateAndSendCode(\App\Models\User $user): void
+    {
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $user->update([
+            'two_factor_code'       => bcrypt($code),
+            'two_factor_expires_at' => now()->addMinutes(5),
+        ]);
+
+        $user->notify(new TwoFactorCodeNotification($code));
+    }
+}

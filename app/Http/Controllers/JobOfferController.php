@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreJobOfferRequest;
+use App\Http\Requests\UpdateJobOfferRequest;
 use App\Models\JobOffer;
 use App\Models\Institution;
 use Illuminate\Http\Request;
@@ -51,17 +53,9 @@ class JobOfferController extends Controller
         return view('job-offers.create', compact('institutions'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreJobOfferRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'institution_id'  => ['required', 'exists:institutions,id'],
-            'titre'           => ['required', 'string', 'max:255'],
-            'description'     => ['required', 'string'],
-            'type_contrat'    => ['required', 'in:CDI,CDD,Stage,Prestation_Artisanale'],
-            'lieu'            => ['required', 'string', 'max:255'],
-            'budget_salaire'  => ['nullable', 'integer', 'min:0'],
-            'date_expiration' => ['required', 'date', 'after:today'],
-        ]);
+        $validated = $request->validated();
 
         // Vérifie que l'institution appartient au recruteur connecté
         $institution = Institution::findOrFail($validated['institution_id']);
@@ -82,20 +76,11 @@ class JobOfferController extends Controller
         return view('job-offers.edit', compact('jobOffer', 'institutions'));
     }
 
-    public function update(Request $request, JobOffer $jobOffer): RedirectResponse
+    public function update(UpdateJobOfferRequest $request, JobOffer $jobOffer): RedirectResponse
     {
         Gate::authorize('manage', $jobOffer->institution);
 
-        $validated = $request->validate([
-            'titre'           => ['required', 'string', 'max:255'],
-            'description'     => ['required', 'string'],
-            'type_contrat'    => ['required', 'in:CDI,CDD,Stage,Prestation_Artisanale'],
-            'lieu'            => ['required', 'string', 'max:255'],
-            'budget_salaire'  => ['nullable', 'integer', 'min:0'],
-            'date_expiration' => ['required', 'date'],
-        ]);
-
-        $jobOffer->update($validated);
+        $jobOffer->update($request->validated());
 
         return redirect()->route('dashboard')->with('success', 'Offre mise à jour.');
     }

@@ -18,12 +18,25 @@ class AdministrationSeeder extends Seeder
     public function run(): void
     {
         // ─── 1. Comptes de test ───────────────────────────────────────────────
+        //
+        // Le mot de passe vient de SEEDER_DEFAULT_PASSWORD dans le .env.
+        // Si la variable n'est pas définie, un mot de passe aléatoire est
+        // généré et affiché UNE SEULE FOIS dans la console — jamais codé en dur.
+
+        $plainPassword = env('SEEDER_DEFAULT_PASSWORD') ?: \Illuminate\Support\Str::password(14);
+        $hashedPassword = Hash::make($plainPassword);
+
+        if (! env('SEEDER_DEFAULT_PASSWORD')) {
+            $this->command?->warn("Aucun SEEDER_DEFAULT_PASSWORD défini dans .env.");
+            $this->command?->warn("Mot de passe généré pour les comptes de démo : {$plainPassword}");
+            $this->command?->warn("Notez-le maintenant, il ne sera plus jamais affiché.");
+        }
 
         $admin = User::firstOrCreate(
             ['email' => 'admin@travailtogo.tg'],
             [
                 'name'      => 'Admin TravailTogo',
-                'password'  => Hash::make('password'),
+                'password'  => $hashedPassword,
                 'role'      => 'admin',
                 'telephone' => '+228 90 00 00 01',
             ]
@@ -33,7 +46,7 @@ class AdministrationSeeder extends Seeder
             ['email' => 'rh@emploi.gouv.tg'],
             [
                 'name'      => 'Direction RH — Fonction Publique',
-                'password'  => Hash::make('password'),
+                'password'  => $hashedPassword,
                 'role'      => 'recruteur',
                 'telephone' => '+228 22 21 30 00',
             ]
@@ -43,7 +56,7 @@ class AdministrationSeeder extends Seeder
             ['email' => 'rh@togocom.tg'],
             [
                 'name'      => 'RH Togocom',
-                'password'  => Hash::make('password'),
+                'password'  => $hashedPassword,
                 'role'      => 'recruteur',
                 'telephone' => '+228 22 21 60 00',
             ]
@@ -53,7 +66,7 @@ class AdministrationSeeder extends Seeder
             ['email' => 'kodjo.amevor@gmail.com'],
             [
                 'name'      => 'Kodjo Amévor',
-                'password'  => Hash::make('password'),
+                'password'  => $hashedPassword,
                 'role'      => 'citoyen',
                 'telephone' => '+228 90 12 34 56',
             ]
@@ -63,7 +76,7 @@ class AdministrationSeeder extends Seeder
             ['email' => 'afia.dossou@gmail.com'],
             [
                 'name'      => 'Afia Dossou',
-                'password'  => Hash::make('password'),
+                'password'  => $hashedPassword,
                 'role'      => 'citoyen',
                 'telephone' => '+228 91 23 45 67',
             ]
@@ -301,15 +314,15 @@ class AdministrationSeeder extends Seeder
             ]
         );
 
-        $this->command->info('✅ Seeder terminé — comptes de test :');
+        $this->command->info('Seeder terminé — comptes de test :');
         $this->command->table(
             ['Rôle', 'Email', 'Mot de passe'],
             [
-                ['Admin',     'admin@travailtogo.tg',   'password'],
-                ['Recruteur', 'rh@emploi.gouv.tg',      'password'],
-                ['Recruteur', 'rh@togocom.tg',          'password'],
-                ['Citoyen',   'kodjo.amevor@gmail.com', 'password'],
-                ['Citoyen',   'afia.dossou@gmail.com',  'password'],
+                ['Admin',     'admin@travailtogo.tg',   $plainPassword],
+                ['Recruteur', 'rh@emploi.gouv.tg',      $plainPassword],
+                ['Recruteur', 'rh@togocom.tg',          $plainPassword],
+                ['Citoyen',   'kodjo.amevor@gmail.com', $plainPassword],
+                ['Citoyen',   'afia.dossou@gmail.com',  $plainPassword],
             ]
         );
     }

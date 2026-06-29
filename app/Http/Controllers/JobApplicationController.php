@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\JobApplicationRequest;
 use App\Models\JobApplication;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -61,15 +62,9 @@ class JobApplicationController extends Controller
         return view('job-applications.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(JobApplicationRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'titre_profil'    => ['required', 'string', 'max:150'],
-            'secteur_activite'=> ['required', 'string', 'max:100'],
-            'competences'     => ['required', 'string', 'max:1000'],
-            'ville'           => ['required', 'string', 'max:100'],
-            'disponibilite'   => ['boolean'],
-        ]);
+        $validated = $request->validated();
 
         $validated['user_id']           = auth()->id();
         $validated['disponibilite']     = $request->boolean('disponibilite');
@@ -88,17 +83,11 @@ class JobApplicationController extends Controller
         return view('job-applications.edit', compact('jobApplication'));
     }
 
-    public function update(Request $request, JobApplication $jobApplication): RedirectResponse
+    public function update(JobApplicationRequest $request, JobApplication $jobApplication): RedirectResponse
     {
         $this->authorizeOwner($jobApplication);
 
-        $validated = $request->validate([
-            'titre_profil'    => ['required', 'string', 'max:150'],
-            'secteur_activite'=> ['required', 'string', 'max:100'],
-            'competences'     => ['required', 'string', 'max:1000'],
-            'ville'           => ['required', 'string', 'max:100'],
-            'disponibilite'   => ['boolean'],
-        ]);
+        $validated = $request->validated();
 
         $validated['disponibilite']     = $request->boolean('disponibilite');
         $validated['statut_moderation'] = 'en_attente'; // re-modération à chaque modif

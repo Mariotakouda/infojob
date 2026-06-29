@@ -10,7 +10,7 @@
     </div>
 
     <div class="bg-white border border-gray-200 rounded-xl p-6">
-        <h1 class="text-xl font-bold text-gray-900 mb-1">Créer mon profil / vitrine</h1>
+        <h1 class="text-xl font-bold text-gray-900 mb-1">Créer mon profil</h1>
         <p class="text-sm text-gray-500 mb-6">Votre profil sera visible après validation par un modérateur.</p>
 
         <form method="POST" action="{{ route('job-applications.store') }}" class="space-y-5">

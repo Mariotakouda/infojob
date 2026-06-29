@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ModererProfilRequest;
+use App\Http\Requests\PublierOffreRequest;
 use App\Models\JobApplication;
 use App\Models\JobOffer;
 use App\Models\User;
 use App\Models\Institution;
 use App\Models\Candidature;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AdminController extends Controller
@@ -36,16 +38,43 @@ class AdminController extends Controller
             ->take(20)
             ->get();
 
-        $derniersUsers = User::latest()->take(10)->get();
-
-        return view('admin.index', compact('stats', 'profilsEnAttente', 'offresEnAttente', 'derniersUsers'));
+        return view('admin.index', compact('stats', 'profilsEnAttente', 'offresEnAttente'));
     }
 
-    public function modererProfil(Request $request, JobApplication $jobApplication): RedirectResponse
+    /**
+     * Liste paginée des utilisateurs, avec recherche et filtre par rôle.
+     * Rendue dans un partial pour pouvoir être rafraîchie de façon isolée
+     * (utilisée aussi bien en chargement complet qu'en pagination/recherche).
+     */
+    public function users(Request $request): View
     {
-        $validated = $request->validate([
-            'statut_moderation' => ['required', 'in:approuve,rejete'],
+        $search = trim((string) $request->query('search', ''));
+        $role   = $request->query('role', '');
+
+        $users = User::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->when(in_array($role, ['admin', 'recruteur', 'citoyen'], true), function ($query) use ($role) {
+                $query->where('role', $role);
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('admin.partials.users-table', [
+            'users'  => $users,
+            'search' => $search,
+            'role'   => $role,
         ]);
+    }
+
+    public function modererProfil(ModererProfilRequest $request, JobApplication $jobApplication): RedirectResponse
+    {
+        $validated = $request->validated();
 
         $jobApplication->update($validated);
 
@@ -54,11 +83,9 @@ class AdminController extends Controller
         return back()->with('success', "Profil {$label} avec succès.");
     }
 
-    public function publierOffre(Request $request, JobOffer $jobOffer): RedirectResponse
+    public function publierOffre(PublierOffreRequest $request, JobOffer $jobOffer): RedirectResponse
     {
-        $validated = $request->validate([
-            'statut' => ['required', 'in:publie,expire,en_attente'],
-        ]);
+        $validated = $request->validated();
 
         $jobOffer->update($validated);
 

@@ -12,16 +12,21 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        // Les admins disposent d'un panneau dédié et plus complet.
         if ($user->role === 'admin') {
             return redirect()->route('admin.index');
         }
 
-        $user->load([
-            'institutions.jobOffers',
-            'jobApplications',
-            'candidatures.jobOffer.institution',
-        ]);
+        if ($user->role === 'recruteur') {
+            $user->load([
+                'institutions.jobOffers.candidatures.user',  // candidatures reçues
+                'institutions.procedures',                    // démarches publiées
+            ]);
+        } else {
+            $user->load([
+                'jobApplications',
+                'candidatures.jobOffer.institution',
+            ]);
+        }
 
         return match ($user->role) {
             'recruteur' => view('dashboards.recruteur', compact('user')),

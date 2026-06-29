@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\InstitutionRequest;
 use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -50,17 +51,9 @@ class InstitutionController extends Controller
         return view('institutions.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(InstitutionRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'nom'            => ['required', 'string', 'max:255'],
-            'type'           => ['required', 'in:ministere,mairie,prefecture,direction,presidence,entreprise_privee,particulier'],
-            'ville'          => ['required', 'string', 'max:100'],
-            'adresse'        => ['required', 'string', 'max:255'],
-            'contact_public' => ['nullable', 'string', 'max:255'],
-        ]);
-
-        $institution = $request->user()->institutions()->create($validated);
+        $institution = $request->user()->institutions()->create($request->validated());
 
         return redirect()->route('institutions.show', $institution)
             ->with('success', 'Institution créée avec succès.');
@@ -73,19 +66,11 @@ class InstitutionController extends Controller
         return view('institutions.edit', compact('institution'));
     }
 
-    public function update(Request $request, Institution $institution): RedirectResponse
+    public function update(InstitutionRequest $request, Institution $institution): RedirectResponse
     {
         $this->authorizeOwner($institution);
 
-        $validated = $request->validate([
-            'nom'            => ['required', 'string', 'max:255'],
-            'type'           => ['required', 'in:ministere,mairie,prefecture,direction,presidence,entreprise_privee,particulier'],
-            'ville'          => ['required', 'string', 'max:100'],
-            'adresse'        => ['required', 'string', 'max:255'],
-            'contact_public' => ['nullable', 'string', 'max:255'],
-        ]);
-
-        $institution->update($validated);
+        $institution->update($request->validated());
 
         return redirect()->route('institutions.show', $institution)
             ->with('success', 'Institution mise à jour.');

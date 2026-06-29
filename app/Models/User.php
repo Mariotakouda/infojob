@@ -17,17 +17,21 @@ class User extends Authenticatable
         'password',
         'telephone',
         'role',
+        'two_factor_code',
+        'two_factor_expires_at',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_code',
     ];
 
     protected function casts(): array
     {
         return [
-            'password' => 'hashed',
+            'password'              => 'hashed',
+            'two_factor_expires_at' => 'datetime',
         ];
     }
 

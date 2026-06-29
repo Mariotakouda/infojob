@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRequirementRequest;
 use App\Models\Procedure;
 use App\Models\Requirement;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 
 class RequirementController extends Controller
 {
-    public function store(Request $request, Procedure $procedure): RedirectResponse
+    public function store(StoreRequirementRequest $request, Procedure $procedure): RedirectResponse
     {
         // Vérifie que la procédure appartient au recruteur connecté
         $ownerIds = auth()->user()->institutions()->pluck('id');
@@ -17,12 +17,7 @@ class RequirementController extends Controller
             abort(403);
         }
 
-        $validated = $request->validate([
-            'libelle'         => ['required', 'string', 'max:255'],
-            'description'     => ['nullable', 'string', 'max:500'],
-            'est_obligatoire' => ['boolean'],
-        ]);
-
+        $validated = $request->validated();
         $validated['est_obligatoire'] = $request->boolean('est_obligatoire');
 
         $procedure->requirements()->create($validated);

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProcedureRequest;
+use App\Http\Requests\UpdateProcedureRequest;
 use App\Models\Institution;
 use App\Models\Procedure;
 use Illuminate\Http\Request;
@@ -46,22 +48,17 @@ class ProcedureController extends Controller
         return view('procedures.create', compact('institutions'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreProcedureRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'institution_id' => ['required', 'exists:institutions,id'],
-            'titre'          => ['required', 'string', 'max:255'],
-            'description'    => ['required', 'string'],
-            'cout'           => ['nullable', 'integer', 'min:0'],
-            'delai'          => ['nullable', 'string', 'max:100'],
-            'lieu_depot'     => ['nullable', 'string', 'max:255'],
-            'lien_en_ligne'  => ['nullable', 'url', 'max:255'],
-        ]);
+        $validated = $request->validated();
 
         // Vérifie que l'institution appartient au recruteur
         $institution = auth()->user()->institutions()->findOrFail($validated['institution_id']);
 
         $procedure = $institution->procedures()->create($validated);
+
+        // ─── Sauvegarde des pièces ────────────────────────────────────────
+        $this->syncRequirements($procedure, $request->input('pieces', []));
 
         return redirect()->route('procedures.show', $procedure)
             ->with('success', 'Démarche créée avec succès.');
@@ -71,25 +68,21 @@ class ProcedureController extends Controller
     {
         $this->authorizeOwner($procedure);
 
+        $procedure->load('requirements');
+
         $institutions = auth()->user()->institutions()->get(['id', 'nom']);
 
         return view('procedures.edit', compact('procedure', 'institutions'));
     }
 
-    public function update(Request $request, Procedure $procedure): RedirectResponse
+    public function update(UpdateProcedureRequest $request, Procedure $procedure): RedirectResponse
     {
         $this->authorizeOwner($procedure);
 
-        $validated = $request->validate([
-            'titre'         => ['required', 'string', 'max:255'],
-            'description'   => ['required', 'string'],
-            'cout'          => ['nullable', 'integer', 'min:0'],
-            'delai'         => ['nullable', 'string', 'max:100'],
-            'lieu_depot'    => ['nullable', 'string', 'max:255'],
-            'lien_en_ligne' => ['nullable', 'url', 'max:255'],
-        ]);
+        $procedure->update($request->validated());
 
-        $procedure->update($validated);
+        // ─── Resynchronise les pièces (delete + recreate) ─────────────────
+        $this->syncRequirements($procedure, $request->input('pieces', []));
 
         return redirect()->route('procedures.show', $procedure)
             ->with('success', 'Démarche mise à jour.');
@@ -105,7 +98,28 @@ class ProcedureController extends Controller
             ->with('success', 'Démarche supprimée.');
     }
 
-    // ─── Helper ──────────────────────────────────────────────────────────────
+    // ─── Helpers ─────────────────────────────────────────────────────────────
+
+    /**
+     * Supprime toutes les pièces existantes et recrée depuis le tableau $pieces.
+     */
+    private function syncRequirements(Procedure $procedure, array $pieces): void
+    {
+        $procedure->requirements()->delete();
+
+        foreach ($pieces as $piece) {
+            $libelle = trim($piece['libelle'] ?? '');
+
+            if ($libelle === '') {
+                continue; // ignore les lignes vides
+            }
+
+            $procedure->requirements()->create([
+                'libelle'         => $libelle,
+                'est_obligatoire' => ! empty($piece['est_obligatoire']),
+            ]);
+        }
+    }
 
     private function authorizeOwner(Procedure $procedure): void
     {
