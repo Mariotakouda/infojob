@@ -5,7 +5,12 @@
 @section('content')
 
 <div class="mb-6">
-    <a href="{{ route('procedures.index') }}" class="text-sm text-gray-400 hover:text-primary">← Toutes les démarches</a>
+    <a href="{{ route('procedures.index') }}" class="group inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-primary transition-colors duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Toutes les démarches
+    </a>
 </div>
 
 <div class="max-w-3xl">
@@ -70,8 +75,14 @@
         @if($procedure->lien_en_ligne)
             <div class="mt-4">
                 <a href="{{ $procedure->lien_en_ligne }}" target="_blank" rel="noopener"
-                    class="inline-flex items-center gap-1 text-sm text-primary hover:underline font-medium">
-                    🔗 Effectuer cette démarche en ligne →
+                    class="group inline-flex items-center gap-1.5 text-sm text-primary font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                    </svg>
+                    <span class="group-hover:underline">Effectuer cette démarche en ligne</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
                 </a>
             </div>
         @endif
@@ -91,9 +102,17 @@
             <div class="flex items-start gap-3 py-3 border-t border-gray-100 first:border-0">
                 <span class="mt-0.5 flex-shrink-0">
                     @if($req->est_obligatoire)
-                        <span class="inline-block w-5 h-5 bg-red-100 text-red-600 rounded-full text-xs flex items-center justify-center font-bold" title="Obligatoire">!</span>
+                        <span class="inline-flex w-5 h-5 bg-red-100 text-red-600 rounded-full items-center justify-center" title="Obligatoire">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.007v.008H12v-.008zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </span>
                     @else
-                        <span class="inline-block w-5 h-5 bg-gray-100 text-gray-400 rounded-full text-xs flex items-center justify-center" title="Optionnel">○</span>
+                        <span class="inline-flex w-5 h-5 bg-gray-100 text-gray-400 rounded-full items-center justify-center" title="Optionnel">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <circle cx="12" cy="12" r="8" />
+                            </svg>
+                        </span>
                     @endif
                 </span>
                 <div class="flex-1">
@@ -113,7 +132,11 @@
                     @if(auth()->user()->institutions()->pluck('id')->contains($procedure->institution_id) || auth()->user()->isAdmin())
                         <form method="POST" action="{{ route('procedures.requirements.destroy', [$procedure, $req]) }}">
                             @csrf @method('DELETE')
-                            <button class="text-xs text-gray-300 hover:text-red-400 transition-colors ml-2">✕</button>
+                            <button class="inline-flex items-center justify-center w-6 h-6 rounded-md text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors duration-200 ml-2" title="Supprimer">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
                         </form>
                     @endif
                 @endauth

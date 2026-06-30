@@ -35,7 +35,7 @@ class AdministrationSeeder extends Seeder
         $admin = User::firstOrCreate(
             ['email' => 'admin@travailtogo.tg'],
             [
-                'name'      => 'Admin TravailTogo',
+                'name'      => 'Administrateur de InfoJob',
                 'password'  => $hashedPassword,
                 'role'      => 'admin',
                 'telephone' => '+228 90 00 00 01',

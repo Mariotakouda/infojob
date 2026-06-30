@@ -11,8 +11,11 @@
     </div>
     @auth
         @if(auth()->user()->isRecruteur())
-            <a href="{{ route('institutions.create') }}" class="bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-dark transition-colors">
-                + Ajouter une institution
+            <a href="{{ route('institutions.create') }}" class="group inline-flex items-center gap-1.5 bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-dark transition-all duration-200 hover:shadow-md hover:shadow-primary/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-200 group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Ajouter une institution
             </a>
         @endif
     @endauth
@@ -40,7 +43,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     @forelse($institutions as $institution)
         <a href="{{ route('institutions.show', $institution) }}"
-            class="bg-white border border-gray-200 rounded-xl p-5 hover:border-primary hover:shadow-sm transition-all block">
+            class="card-lift bg-white border border-gray-200 rounded-xl p-5 hover:border-primary hover:shadow-sm transition-all block animate-fade-up">
             <div class="flex items-start justify-between mb-3">
                 <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-700">
                     {{ $institution->typeLabel() }}

@@ -18,66 +18,61 @@
 </style>
 @endpush
 
-{{-- Conteneur de sécurité anti-débordement local --}}
-<div class="overflow-x-hidden w-full">
+{{-- ─── Hero (full bleed, pleine largeur même avec le padding du layout) ─── --}}
+<div class="hero-fullbleed relative text-center overflow-hidden bg-gray-900 -mt-6 sm:-mt-8" style="min-height: 520px;">
 
-    {{-- ─── Hero corrigé (Remplacement de w-screen par un système full bleed propre) ─── --}}
-    <div class="hero-fullbleed relative text-center overflow-hidden bg-gray-900 mx-[calc(-50vw+50%)] w-[100vw]" style="min-height: 520px;">
-
-        {{-- Conteneur des images de fond --}}
-        <div class="absolute inset-0 z-0 pointer-events-none">
-            {{-- Image 1 --}}
-            <div class="absolute inset-0 bg-cover bg-center animate-slider-1" 
-                 style="background-image: url('{{ asset('images/img3.jpg') }}');"></div>
-            {{-- Image 2 --}}
-            <div class="absolute inset-0 bg-cover bg-center opacity-0 animate-slider-2" 
-                 style="background-image: url('{{ asset('images/img1.jpg') }}');"></div>
-            {{-- Image 3 --}}
-            <div class="absolute inset-0 bg-cover bg-center opacity-0 animate-slider-3" 
-                 style="background-image: url('{{ asset('images/img2.jpg') }}');"></div>
-        </div>
-
-        {{-- Overlay dégradé --}}
-        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/75 z-10 pointer-events-none"></div>
-
-        {{-- Contenu au premier plan --}}
-        <div class="relative z-20 flex flex-col items-center justify-center px-4 py-20 sm:py-28">
-
-            <a href="{{ route('home') }}" class="mb-6 transition-transform hover:scale-105 duration-300">
-                <img src="{{ asset('images/logo1.png') }}" alt="TravailTogo" class="h-20 drop-shadow-lg">
-            </a>
-
-            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight max-w-3xl animate-fade-up"
-                style="animation-delay: 0.05s; text-shadow: 0 2px 16px rgba(0,0,0,0.3)">
-                Emploi, démarches & artisanat<br class="hidden sm:block"> au cœur du Togo
-            </h1>
-
-            <p class="text-gray-200 mt-5 max-w-lg mx-auto text-base sm:text-lg leading-relaxed animate-fade-up"
-               style="animation-delay: 0.15s">
-                TravailTogo connecte citoyens, artisans, recruteurs et institutions sur une seule plateforme.
-            </p>
-
-            <div class="flex flex-wrap justify-center gap-3 mt-8 animate-fade-up" style="animation-delay: 0.25s">
-                <a href="{{ route('job-offers.index') }}"
-                    class="bg-primary text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-primary-dark transition-all duration-200 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5">
-                    Voir les offres d'emploi
-                </a>
-                @auth
-                    <a href="{{ route('dashboard') }}"
-                        class="border border-white/50 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/15 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5">
-                        Mon tableau de bord
-                    </a>
-                @else
-                    <a href="{{ route('register') }}"
-                        class="border border-white/50 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/15 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5">
-                        Créer un compte
-                    </a>
-                @endauth
-            </div>
-
-        </div>
+    {{-- Conteneur des images de fond --}}
+    <div class="absolute inset-0 z-0 pointer-events-none">
+        {{-- Image 1 --}}
+        <div class="absolute inset-0 bg-cover bg-center animate-slider-1" 
+             style="background-image: url('{{ asset('images/img3.jpg') }}');"></div>
+        {{-- Image 2 --}}
+        <div class="absolute inset-0 bg-cover bg-center opacity-0 animate-slider-2" 
+             style="background-image: url('{{ asset('images/img1.jpg') }}');"></div>
+        {{-- Image 3 --}}
+        <div class="absolute inset-0 bg-cover bg-center opacity-0 animate-slider-3" 
+             style="background-image: url('{{ asset('images/img2.jpg') }}');"></div>
     </div>
 
+    {{-- Overlay dégradé --}}
+    <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/75 z-10 pointer-events-none"></div>
+
+    {{-- Contenu au premier plan --}}
+    <div class="relative z-20 flex flex-col items-center justify-center px-4 py-20 sm:py-28">
+
+        <a href="{{ route('home') }}" class="mb-6 transition-transform hover:scale-105 duration-300">
+            <img src="{{ asset('images/logo1.png') }}" alt="TravailTogo" class="h-20 drop-shadow-lg">
+        </a>
+
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight max-w-3xl animate-fade-up"
+            style="animation-delay: 0.05s; text-shadow: 0 2px 16px rgba(0,0,0,0.3)">
+            Emploi, démarches administratives et profils artisanat<br class="hidden sm:block"> au cœur du Togo
+        </h1>
+
+        <p class="text-gray-200 mt-5 max-w-lg mx-auto text-base sm:text-lg leading-relaxed animate-fade-up"
+           style="animation-delay: 0.15s">
+            InfoJob connecte citoyens, artisans, recruteurs et institutions sur une seule plateforme.
+        </p>
+
+        <div class="flex flex-wrap justify-center gap-3 mt-8 animate-fade-up" style="animation-delay: 0.25s">
+            <a href="{{ route('job-offers.index') }}"
+                class="bg-primary text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-primary-dark transition-all duration-200 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5">
+                Voir les offres d'emploi
+            </a>
+            @auth
+                <a href="{{ route('dashboard') }}"
+                    class="border border-white/50 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/15 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5">
+                    Mon tableau de bord
+                </a>
+            @else
+                <a href="{{ route('register') }}"
+                    class="border border-white/50 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/15 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5">
+                    Créer un compte
+                </a>
+            @endauth
+        </div>
+
+    </div>
 </div>
 
 {{-- ─── Liens principaux ───────────────────────────────────────── --}}

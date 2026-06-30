@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo1.png') }}">
-    <title>@yield('title', 'TravailTogo') — Plateforme emploi et démarches au Togo</title>
+    <title>@yield('title', 'TravailTogo') - Plateforme emploi et démarches administratives au Togo</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -43,10 +43,13 @@
             background: rgba(255,255,255,0.97) !important;
         }
 
-        /* Hero full bleed */
+        /* Hero full bleed (robuste : reste pleine largeur même si le parent a un padding) */
         .hero-fullbleed {
-            margin-left: calc(-50vw + 50%);
-            margin-right: calc(-50vw + 50%);
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
             width: 100vw;
         }
 
@@ -97,7 +100,7 @@
     </style>
     @stack('styles')
 </head>
-<body class="bg-gray-50 text-gray-900 antialiased">
+<body class="bg-gray-50 text-gray-900 antialiased overflow-x-hidden">
 
     {{-- Navigation --}}
     <nav id="main-nav" class="bg-white/95 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 transition-all duration-300 animate-fade-down">
@@ -150,7 +153,7 @@
 
     {{-- Flash messages --}}
     @if(session('success'))
-        <div class="max-w-7xl mx-auto px-4 pt-4 animate-fade-down">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 animate-fade-down">
             <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
                 <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
                 {{ session('success') }}
@@ -159,7 +162,7 @@
     @endif
 
     @if(session('error'))
-        <div class="max-w-7xl mx-auto px-4 pt-4 animate-fade-down">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 animate-fade-down">
             <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
                 <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-9v4a1 1 0 002 0V9a1 1 0 00-2 0zm1-4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/></svg>
                 {{ session('error') }}
@@ -168,14 +171,14 @@
     @endif
 
     {{-- Contenu principal --}}
-    <main>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-12">
         @yield('content')
     </main>
 
     {{-- Footer --}}
     <footer class="border-t border-gray-200 mt-16 py-10 text-center text-sm text-gray-400">
-        <p class="font-medium text-gray-500 mb-1">TravailTogo</p>
-        <p>© {{ date('Y') }} — Plateforme emploi, démarches & artisanat au Togo</p>
+        <p class="font-medium text-gray-500 mb-1">InfoJob-Togo</p>
+        <p>© {{ date('Y') }} - Plateforme emploi, démarches & artisanat au Togo</p>
     </footer>
 
     <script>

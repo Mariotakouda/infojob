@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="min-h-[60vh] flex items-center justify-center">
-    <div class="w-full max-w-md">
+    <div class="w-full max-w-md animate-fade-up">
 
         <div class="text-center mb-8">
             <h1 class="text-2xl font-bold text-gray-900">Connexion à votre compte</h1>
@@ -68,7 +68,7 @@
                 <div class="flex items-center justify-between">
                     <label class="flex items-center gap-2 text-sm text-gray-600">
                         <input type="checkbox" name="remember" class="rounded border-gray-300 text-primary">
-                        Se souvenir de moi
+                        Se souvenir du mot de passe
                     </label>
                 </div>
 

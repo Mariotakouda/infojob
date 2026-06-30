@@ -5,10 +5,10 @@
 @section('content')
 
 {{-- Topbar --}}
-<div class="flex items-center justify-between mb-8 pl-4">
+<div class="flex items-center justify-between mb-8">
     <div>
         <h1 class="text-lg font-medium text-gray-900 tracking-tight">Administration</h1>
-        <p class="text-xs text-gray-400 mt-0.5">TravailTogo · Panneau de modération</p>
+        <p class="text-xs text-gray-400 mt-0.5">InfoJob · Panneau de modération</p>
     </div>
     <div class="flex items-center gap-2">
         <button class="relative w-8 h-8 inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 transition-colors" aria-label="Notifications">
@@ -29,7 +29,7 @@
 </div>
 
 {{-- KPIs --}}
-<div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5 mb-6">
+<div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5 mb-6 stagger">
 
     <div class="bg-white rounded-xl border border-gray-200 p-4 relative overflow-hidden">
         <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 mb-2.5">

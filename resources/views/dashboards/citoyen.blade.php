@@ -80,8 +80,11 @@
     @empty
         <p class="text-sm text-gray-400 py-4 text-center">
             Aucun profil créé.
-            <a href="{{ route('job-applications.create') }}" class="text-primary hover:underline">
-                Créer votre vitrine →
+            <a href="{{ route('job-applications.create') }}" class="group inline-flex items-center gap-1 text-primary">
+                <span class="group-hover:underline">Créer votre vitrine</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
             </a>
         </p>
     @endforelse
@@ -91,7 +94,12 @@
 <div class="bg-white rounded-xl border border-gray-200 p-6">
     <div class="flex items-center justify-between mb-4">
         <h2 class="font-semibold text-gray-900">Mes candidatures</h2>
-        <a href="{{ route('candidatures.index') }}" class="text-xs text-primary hover:underline">Voir tout →</a>
+        <a href="{{ route('candidatures.index') }}" class="group inline-flex items-center gap-1 text-xs text-primary">
+            <span class="group-hover:underline">Voir tout</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+        </a>
     </div>
 
     @forelse($user->candidatures->take(5) as $candidature)
@@ -119,14 +127,22 @@
     @empty
         <p class="text-sm text-gray-400 py-4 text-center">
             Aucune candidature.
-            <a href="{{ route('job-offers.index') }}" class="text-primary hover:underline">Voir les offres →</a>
+            <a href="{{ route('job-offers.index') }}" class="group inline-flex items-center gap-1 text-primary">
+                <span class="group-hover:underline">Voir les offres</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+            </a>
         </p>
     @endforelse
 
     @if($user->candidatures->count() > 5)
         <div class="mt-3 text-center">
-            <a href="{{ route('candidatures.index') }}" class="text-xs text-primary hover:underline">
-                Voir toutes les candidatures ({{ $user->candidatures->count() }}) →
+            <a href="{{ route('candidatures.index') }}" class="group inline-flex items-center gap-1 text-xs text-primary">
+                <span class="group-hover:underline">Voir toutes les candidatures ({{ $user->candidatures->count() }})</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
             </a>
         </div>
     @endif

@@ -35,7 +35,7 @@
 
 {{-- Grille d'offres --}}
 @forelse($offres as $offre)
-    <div class="bg-white border border-gray-200 rounded-xl p-5 mb-4 hover:border-primary transition-colors">
+    <div class="card-lift bg-white border border-gray-200 rounded-xl p-5 mb-4 hover:border-primary transition-colors animate-fade-up">
         <div class="flex items-start justify-between gap-4">
             <div class="flex-1">
                 <div class="flex items-center gap-2 mb-1">
@@ -60,8 +60,11 @@
         </div>
         <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
             <span class="text-xs text-gray-400">{{ $offre->candidatures_count ?? $offre->candidatures->count() }} candidature(s)</span>
-            <a href="{{ route('job-offers.show', $offre) }}" class="text-sm font-medium text-primary hover:underline">
-                Voir l'offre →
+            <a href="{{ route('job-offers.show', $offre) }}" class="group inline-flex items-center gap-1 text-sm font-medium text-primary">
+                <span class="group-hover:underline">Voir l'offre</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
             </a>
         </div>
     </div>

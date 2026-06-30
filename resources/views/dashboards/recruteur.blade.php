@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="flex items-center justify-between mb-8 pl-4">
+<div class="flex items-center justify-between mb-8">
     <div>
         <h1 class="text-lg font-medium text-gray-900 tracking-tight">Bonjour, {{ $user->name }}</h1>
         <p class="text-xs text-gray-400 mt-0.5">Votre espace recruteur / institution</p>
@@ -87,7 +87,12 @@
             <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" /></svg>
             Mes institutions
         </div>
-        <a href="{{ route('institutions.create') }}" class="text-[11px] text-blue-500 hover:text-blue-700">+ Ajouter</a>
+        <a href="{{ route('institutions.create') }}" class="group inline-flex items-center gap-1 text-[11px] text-blue-500 hover:text-blue-700 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 transition-transform duration-200 group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Ajouter
+        </a>
     </div>
 
     @forelse($user->institutions as $institution)
@@ -129,7 +134,12 @@
                         <div class="flex items-center justify-between gap-3 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 flex-wrap">
                             <div>
                                 <p class="text-[11px] font-medium text-gray-900">{{ $cand->user->name }}</p>
-                                <p class="text-[11px] text-gray-400">→ {{ $cand->jobOffer->titre }}</p>
+                                <p class="inline-flex items-center gap-1 text-[11px] text-gray-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                    {{ $cand->jobOffer->titre }}
+                                </p>
                             </div>
                             <form method="POST" action="{{ route('candidatures.update-statut', $cand) }}"
                                 class="flex items-center gap-1.5">
@@ -166,7 +176,12 @@
             <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
             Mes démarches administratives
         </div>
-        <a href="{{ route('procedures.create') }}" class="text-[11px] text-blue-500 hover:text-blue-700">+ Ajouter</a>
+        <a href="{{ route('procedures.create') }}" class="group inline-flex items-center gap-1 text-[11px] text-blue-500 hover:text-blue-700 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 transition-transform duration-200 group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Ajouter
+        </a>
     </div>
 
     @php
@@ -232,7 +247,12 @@
             <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" /></svg>
             Mes offres d'emploi
         </div>
-        <a href="{{ route('job-offers.create') }}" class="text-[11px] text-blue-500 hover:text-blue-700">+ Ajouter</a>
+        <a href="{{ route('job-offers.create') }}" class="group inline-flex items-center gap-1 text-[11px] text-blue-500 hover:text-blue-700 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 transition-transform duration-200 group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Ajouter
+        </a>
     </div>
 
     @php

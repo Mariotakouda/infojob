@@ -6,7 +6,12 @@
 
 <div class="max-w-2xl mx-auto">
     <div class="mb-6">
-        <a href="{{ route('institutions.show', $institution) }}" class="text-sm text-gray-400 hover:text-primary">← {{ $institution->nom }}</a>
+        <a href="{{ route('institutions.show', $institution) }}" class="group inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-primary transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
+            {{ $institution->nom }}
+        </a>
     </div>
 
     <div class="bg-white border border-gray-200 rounded-xl p-6">

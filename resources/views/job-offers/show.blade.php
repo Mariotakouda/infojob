@@ -80,8 +80,13 @@
             @auth
                 @if(auth()->user()->isCitoyen())
                     @if($dejaPostule)
-                        <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-                            <p class="text-sm text-green-700 font-medium">✓ Candidature envoyée</p>
+                        <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center animate-fade-up">
+                            <div class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-green-100 text-green-600 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                            </div>
+                            <p class="text-sm text-green-700 font-medium">Candidature envoyée</p>
                             <p class="text-xs text-green-600 mt-1">Vous avez déjà postulé à cette offre</p>
                         </div>
                     @else

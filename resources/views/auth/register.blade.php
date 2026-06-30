@@ -4,10 +4,10 @@
 
 @section('content')
 <div class="min-h-[60vh] flex items-center justify-center py-8">
-    <div class="w-full max-w-md">
+    <div class="w-full max-w-md animate-fade-up">
 
         <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-gray-900">Créer votre compte</h1>
+            <h1 class="text-2xl font-bold text-gray-900">Créer mon compte</h1>
             <p class="text-sm text-gray-500 mt-1">
                 Déjà inscrit ?
                 <a href="{{ route('login') }}" class="text-primary font-medium hover:underline">Se connecter</a>
@@ -53,7 +53,7 @@
 
                 <div>
                     <label for="telephone" class="block text-sm font-medium text-gray-700 mb-1">
-                        Téléphone WhatsApp <span class="text-gray-400 font-normal">(optionnel)</span>
+                        Téléphone <span class="text-gray-400 font-normal">(optionnel)</span>
                     </label>
                     <input
                         type="tel"
@@ -71,7 +71,7 @@
                         <label class="flex items-center gap-3 border border-gray-200 rounded-lg p-3 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-green-50 transition-colors">
                             <input type="radio" name="role" value="citoyen" {{ old('role', 'citoyen') === 'citoyen' ? 'checked' : '' }} class="text-primary">
                             <div>
-                                <p class="text-sm font-medium text-gray-800">Citoyen / Artisan</p>
+                                <p class="text-sm font-medium text-gray-800">Citoyen/Artisan</p>
                                 <p class="text-xs text-gray-500">Je cherche du travail</p>
                             </div>
                         </label>

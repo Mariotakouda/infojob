@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="min-h-[60vh] flex items-center justify-center">
-    <div class="w-full max-w-md">
+    <div class="w-full max-w-md animate-fade-up">
 
         <div class="text-center mb-8">
             {{-- Icône bouclier --}}
@@ -82,7 +82,7 @@
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">
-                        Ce n'est pas moi — me déconnecter
+                        Ce n'est pas moi - me déconnecter
                     </button>
                 </form>
             </div>

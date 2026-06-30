@@ -11,8 +11,11 @@
     </div>
     @auth
         @if(auth()->user()->isCitoyen())
-            <a href="{{ route('job-applications.create') }}" class="bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-dark transition-colors">
-                + Créer mon profil
+            <a href="{{ route('job-applications.create') }}" class="group inline-flex items-center gap-1.5 bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-dark transition-all duration-200 hover:shadow-md hover:shadow-primary/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-200 group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Créer mon profil
             </a>
         @endif
     @endauth
@@ -44,7 +47,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     @forelse($profils as $profil)
         <a href="{{ route('job-applications.show', $profil) }}"
-            class="bg-white border border-gray-200 rounded-xl p-5 hover:border-primary hover:shadow-sm transition-all block">
+            class="card-lift bg-white border border-gray-200 rounded-xl p-5 hover:border-primary hover:shadow-sm transition-all block animate-fade-up">
             <div class="flex items-start justify-between mb-3">
                 <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-lg">
                     {{ mb_substr($profil->user->name, 0, 1) }}
@@ -57,7 +60,13 @@
             </div>
             <p class="font-semibold text-gray-900 mb-1">{{ $profil->titre_profil }}</p>
             <p class="text-xs text-primary font-medium mb-2">{{ $profil->secteur_activite }}</p>
-            <p class="text-xs text-gray-500 mb-3">📍 {{ $profil->ville }}</p>
+            <p class="inline-flex items-center gap-1 text-xs text-gray-500 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                </svg>
+                {{ $profil->ville }}
+            </p>
             <div class="flex flex-wrap gap-1">
                 @foreach(array_slice($profil->competencesArray(), 0, 4) as $comp)
                     <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{{ trim($comp) }}</span>

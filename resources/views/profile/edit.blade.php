@@ -3,9 +3,9 @@
 @section('title', 'Mon profil')
 
 @section('content')
-<div class="max-w-2xl mx-auto py-8 px-4">
+<div class="max-w-2xl mx-auto">
 
-    <div class="mb-8">
+    <div class="mb-8 animate-fade-up">
         <h1 class="text-2xl font-bold text-gray-900">Mon profil</h1>
         <p class="text-sm text-gray-500 mt-1">Gérez vos informations personnelles et vos identifiants de connexion.</p>
     </div>
