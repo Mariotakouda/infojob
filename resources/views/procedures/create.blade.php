@@ -19,7 +19,7 @@
 
         @if($institutions->isEmpty())
             <div class="bg-amber-50 border border-amber-200 text-amber-700 rounded-lg p-4 text-sm">
-                Vous devez d'abord <a href="{{ route('institutions.create') }}" class="underline font-medium">créer une institution</a> avant d'y rattacher des démarches.
+                Vous devez avoir une <a href="{{ route('institutions.create') }}" class="underline font-medium">institution vérifiée</a> avant d'y rattacher des démarches. Une institution nouvellement créée doit d'abord être validée par un administrateur.
             </div>
         @else
         <form method="POST" action="{{ route('procedures.store') }}" class="space-y-5">

@@ -203,6 +203,79 @@
 
 </div>
 
+{{-- Institutions à vérifier --}}
+<div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-2.5">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+        <div class="flex items-center gap-1.5 text-sm font-medium text-gray-900">
+            <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18" /></svg>
+            Institutions à vérifier
+            @if($stats['institutions_attente'] > 0)
+                <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-medium bg-amber-100 text-amber-700">{{ $stats['institutions_attente'] }}</span>
+            @endif
+        </div>
+        <a href="{{ route('institutions.index') }}" class="text-[11px] text-blue-500 hover:text-blue-700">Voir tout</a>
+    </div>
+
+    @forelse($institutionsEnAttente as $institution)
+        @php
+            $initials = strtoupper(substr($institution->nom, 0, 2));
+            $colors = ['bg-blue-50 text-blue-600', 'bg-green-50 text-green-600', 'bg-purple-50 text-purple-600', 'bg-rose-50 text-rose-600'];
+            $color = $colors[$loop->index % count($colors)];
+        @endphp
+        <div class="flex items-start gap-2.5 px-4 py-3 border-b border-gray-50 last:border-0">
+            <div class="w-[30px] h-[30px] rounded-lg {{ $color }} flex items-center justify-center text-[11px] font-medium flex-shrink-0 mt-0.5">
+                {{ $initials }}
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-xs font-medium text-gray-900 truncate">
+                    {{ $institution->nom }}
+                    <span class="font-normal text-gray-400">— {{ $institution->typeLabel() }}</span>
+                </p>
+                <p class="text-[11px] text-gray-400 mt-0.5 truncate">
+                    {{ $institution->user->name }} · {{ $institution->ville }} ·
+                    {{ $institution->numeroIdentificationLabel() }} : {{ $institution->numero_identification ?: '—' }}
+                </p>
+                <div class="flex flex-wrap gap-1 mt-1.5">
+                    @if($institution->aDocumentJustificatif())
+                        <a href="{{ route('institutions.download-justificatif', $institution) }}"
+                            class="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md border border-gray-200 bg-transparent text-gray-500 hover:bg-gray-50 transition-colors">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                            Justificatif
+                        </a>
+                    @else
+                        <span class="text-[11px] text-gray-300 italic px-1">Aucun justificatif</span>
+                    @endif
+                    <a href="{{ route('institutions.show', $institution) }}" class="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md border border-gray-200 bg-transparent text-gray-500 hover:bg-gray-50 transition-colors">
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        Voir
+                    </a>
+                    <form method="POST" action="{{ route('admin.verifier-institution', $institution) }}" class="inline">
+                        @csrf @method('PATCH')
+                        <input type="hidden" name="statut_verification" value="verifiee">
+                        <button class="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md border border-green-200 bg-green-50 text-green-700 hover:bg-green-100 transition-colors">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                            Vérifier
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ route('admin.verifier-institution', $institution) }}" class="inline institution-reject-form">
+                        @csrf @method('PATCH')
+                        <input type="hidden" name="statut_verification" value="rejetee">
+                        <input type="hidden" name="motif_rejet" class="motif-rejet-input">
+                        <button type="button" class="institution-reject-btn inline-flex items-center justify-center w-[26px] h-[26px] rounded-md border border-red-100 bg-red-50 text-red-500 hover:bg-red-100 transition-colors">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @empty
+        <div class="px-4 py-8 text-center">
+            <svg class="w-5 h-5 text-gray-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <p class="text-xs text-gray-400">Aucune institution en attente.</p>
+        </div>
+    @endforelse
+</div>
+
 {{-- Gestion des utilisateurs --}}
 <div class="bg-white rounded-xl border border-gray-200 overflow-hidden" id="users-panel">
 
@@ -241,6 +314,21 @@
 </div>
 
 @push('scripts')
+<script>
+(function () {
+    document.querySelectorAll('.institution-reject-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const motif = window.prompt('Motif du refus (visible par le recruteur) :');
+            if (motif === null || motif.trim() === '') {
+                return;
+            }
+            const form = btn.closest('.institution-reject-form');
+            form.querySelector('.motif-rejet-input').value = motif.trim();
+            form.submit();
+        });
+    });
+})();
+</script>
 <script>
 (function () {
     const container   = document.getElementById('users-table-container');

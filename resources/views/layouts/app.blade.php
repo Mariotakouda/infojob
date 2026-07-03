@@ -121,6 +121,12 @@
 
                 {{-- Auth --}}
                 <div class="flex items-center gap-3">
+                    <a href="{{ route('search') }}" title="Rechercher"
+                        class="hidden sm:inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                    </a>
                     @auth
                         <a href="{{ route('dashboard') }}" class="text-sm text-gray-600 hover:text-primary font-medium transition-colors hidden sm:inline border border-gray-200 hover:border-primary px-3 py-1.5 rounded-lg transition-all duration-200 hover:bg-primary/5">
                              {{ auth()->user()->name }}

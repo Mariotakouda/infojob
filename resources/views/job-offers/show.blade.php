@@ -61,6 +61,12 @@
                         <dt class="text-gray-500">Type</dt>
                         <dd class="font-medium text-gray-900">{{ $jobOffer->typeContratLabel() }}</dd>
                     </div>
+                    @if($jobOffer->metier)
+                        <div class="flex justify-between">
+                            <dt class="text-gray-500">Métier / Profession</dt>
+                            <dd class="font-medium text-gray-900">{{ $jobOffer->metier }}</dd>
+                        </div>
+                    @endif
                     <div class="flex justify-between">
                         <dt class="text-gray-500">Lieu</dt>
                         <dd class="font-medium text-gray-900">{{ $jobOffer->lieu }}</dd>
@@ -75,6 +81,44 @@
                     </div>
                 </dl>
             </div>
+
+            {{-- Accès recruteur : voir tous les candidats --}}
+            @auth
+                @if(auth()->id() === $jobOffer->institution->user_id)
+                    <a href="{{ route('job-offers.candidats', $jobOffer) }}"
+                        class="group flex items-center justify-between gap-3 bg-gray-900 text-white rounded-xl p-4 hover:bg-gray-800 transition-all duration-200 hover:-translate-y-0.5">
+                        <span class="flex items-center gap-2.5 text-sm font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                            </svg>
+                            Voir les candidats
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            <span class="bg-white/15 text-xs font-semibold px-2 py-0.5 rounded-full">{{ $jobOffer->candidatures->count() }}</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                            </svg>
+                        </span>
+                    </a>
+
+                    <a href="{{ route('paiements.boost-form', $jobOffer) }}"
+                        class="group flex items-center justify-between gap-3 border border-primary/30 bg-primary/5 text-primary rounded-xl p-4 hover:bg-primary/10 transition-all duration-200 hover:-translate-y-0.5">
+                        <span class="flex items-center gap-2.5 text-sm font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                            </svg>
+                            @if($jobOffer->estActivementBoostee())
+                                Prolonger la mise en avant
+                            @else
+                                Booster cette offre
+                            @endif
+                        </span>
+                        @if($jobOffer->estActivementBoostee())
+                            <span class="bg-primary/15 text-xs font-semibold px-2 py-0.5 rounded-full">Active</span>
+                        @endif
+                    </a>
+                @endif
+            @endauth
 
             {{-- Formulaire de candidature --}}
             @auth
@@ -92,7 +136,7 @@
                     @else
                         <div class="bg-white border border-gray-200 rounded-xl p-5">
                             <h3 class="font-semibold text-gray-900 mb-4 text-sm">Postuler à cette offre</h3>
-                            <form method="POST" action="{{ route('candidatures.store', $jobOffer) }}">
+                            <form method="POST" action="{{ route('candidatures.store', $jobOffer) }}" enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-4">
                                     <label for="note_motivation" class="block text-xs font-medium text-gray-700 mb-1">
@@ -106,8 +150,26 @@
                                         class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                                         placeholder="Présentez-vous, donnez votre estimation de prix pour les travaux..."
                                     >{{ old('note_motivation') }}</textarea>
+                                    @error('note_motivation')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                                 </div>
-                                <button type="submit" class="w-full bg-primary text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-dark transition-colors">
+
+                                <div class="mb-3">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">
+                                        CV <span class="text-gray-400 font-normal">(optionnel — PDF, DOC, DOCX, 5 Mo max)</span>
+                                    </label>
+                                    <x-file-input name="cv" />
+                                    @error('cv')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">
+                                        Lettre de motivation <span class="text-gray-400 font-normal">(optionnel — PDF, DOC, DOCX, 5 Mo max)</span>
+                                    </label>
+                                    <x-file-input name="lettre_motivation" />
+                                    @error('lettre_motivation')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                                </div>
+
+                                <button type="submit" class="w-full bg-primary text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-dark transition-all duration-200 hover:shadow-lg hover:shadow-primary/25">
                                     Envoyer ma candidature
                                 </button>
                             </form>
@@ -117,7 +179,7 @@
             @else
                 <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 text-center">
                     <p class="text-sm text-gray-600 mb-3">Connectez-vous pour postuler</p>
-                    <a href="{{ route('login') }}" class="block w-full bg-primary text-white py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
+                    <a href="{{ route('login', ['redirect' => url()->current()]) }}" class="block w-full bg-primary text-white py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
                         Se connecter
                     </a>
                 </div>

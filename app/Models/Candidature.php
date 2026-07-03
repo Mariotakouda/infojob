@@ -16,6 +16,10 @@ class Candidature extends Model
         'job_offer_id',
         'note_motivation',
         'statut_candidature',
+        'cv_path',
+        'cv_nom_original',
+        'lettre_motivation_path',
+        'lettre_motivation_nom_original',
     ];
 
     // ─── Scopes ─────────────────────────────────────────────────────────────
@@ -52,6 +56,21 @@ class Candidature extends Model
             'refusee'       => 'badge-danger',
             default         => 'badge-secondary',
         };
+    }
+
+    public function aCv(): bool
+    {
+        return ! empty($this->cv_path);
+    }
+
+    public function aLettreMotivation(): bool
+    {
+        return ! empty($this->lettre_motivation_path);
+    }
+
+    public function aDocuments(): bool
+    {
+        return $this->aCv() || $this->aLettreMotivation();
     }
 
     // ─── Relations ──────────────────────────────────────────────────────────

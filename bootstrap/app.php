@@ -16,6 +16,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'role'       => \App\Http\Middleware\CheckRole::class,
             'two_factor' => \App\Http\Middleware\TwoFactorMiddleware::class,
         ]);
+
+        // PayGateGlobal notifie le paiement via un POST externe (webhook) :
+        // il n'a pas de token CSRF Laravel, donc on l'exclut, sinon la
+        // confirmation de paiement échoue systématiquement (419).
+        $middleware->validateCsrfTokens(except: [
+            'paygate-global/webhook',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
 

@@ -20,7 +20,9 @@
 
         @if($institutions->isEmpty())
             <div class="bg-amber-50 border border-amber-200 text-amber-700 rounded-lg p-4 text-sm">
-                Vous devez d'abord <a href="{{ route('institutions.create') }}" class="underline font-medium">créer une institution</a> avant de publier une offre.
+                Vous devez avoir une <a href="{{ route('institutions.create') }}" class="underline font-medium">institution vérifiée</a> pour publier une offre.
+                Si vous venez d'en créer une, patientez : elle doit d'abord être validée par un administrateur (badge « Vérifiée »).
+                <a href="{{ route('dashboard') }}" class="underline font-medium">Voir le statut de mes institutions</a>
             </div>
         @else
         <form method="POST" action="{{ route('job-offers.store') }}" class="space-y-5">
@@ -68,12 +70,24 @@
                     @error('type_contrat')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Lieu <span class="text-red-500">*</span></label>
-                    <input type="text" name="lieu" value="{{ old('lieu') }}" required
-                        placeholder="Ex : Lomé"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary @error('lieu') border-red-400 @enderror">
-                    @error('lieu')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Métier / Profession <span class="text-red-500">*</span></label>
+                    <select name="metier" required
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary @error('metier') border-red-400 @enderror">
+                        <option value="">— Sélectionner —</option>
+                        @foreach($metiers as $metier)
+                            <option value="{{ $metier }}" {{ old('metier') === $metier ? 'selected' : '' }}>{{ $metier }}</option>
+                        @endforeach
+                    </select>
+                    @error('metier')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Lieu <span class="text-red-500">*</span></label>
+                <input type="text" name="lieu" value="{{ old('lieu') }}" required
+                    placeholder="Ex : Lomé"
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary @error('lieu') border-red-400 @enderror">
+                @error('lieu')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

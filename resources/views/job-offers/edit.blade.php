@@ -54,11 +54,23 @@
                     @error('type_contrat')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Lieu <span class="text-red-500">*</span></label>
-                    <input type="text" name="lieu" value="{{ old('lieu', $jobOffer->lieu) }}" required
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary @error('lieu') border-red-400 @enderror">
-                    @error('lieu')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Métier / Profession <span class="text-red-500">*</span></label>
+                    <select name="metier" required
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary @error('metier') border-red-400 @enderror">
+                        <option value="">— Sélectionner —</option>
+                        @foreach($metiers as $metier)
+                            <option value="{{ $metier }}" {{ old('metier', $jobOffer->metier) === $metier ? 'selected' : '' }}>{{ $metier }}</option>
+                        @endforeach
+                    </select>
+                    @error('metier')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Lieu <span class="text-red-500">*</span></label>
+                <input type="text" name="lieu" value="{{ old('lieu', $jobOffer->lieu) }}" required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary @error('lieu') border-red-400 @enderror">
+                @error('lieu')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

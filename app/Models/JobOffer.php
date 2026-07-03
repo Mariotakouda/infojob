@@ -18,10 +18,41 @@ class JobOffer extends Model
         'titre',
         'description',
         'type_contrat',
+        'metier',
         'lieu',
         'budget_salaire',
         'date_expiration',
         'statut',
+        'est_boostee',
+        'boost_expire_at',
+    ];
+
+    /**
+     * Liste de référence des métiers / professions proposés au filtre.
+     * Utilisée à la fois pour la publication d'une offre et pour le filtre
+     * de recherche sur la page « Offres d'emploi & chantiers ».
+     */
+    public const METIERS = [
+        'Maçonnerie & BTP',
+        'Plomberie',
+        'Électricité',
+        'Menuiserie & Ébénisterie',
+        'Soudure & Métallerie',
+        'Peinture & Décoration',
+        'Mécanique automobile',
+        'Couture & Mode',
+        'Coiffure & Esthétique',
+        'Informatique & Numérique',
+        'Comptabilité & Finance',
+        'Commerce & Vente',
+        'Logistique & Transport',
+        'Hôtellerie & Restauration',
+        'Agriculture & Élevage',
+        'Santé & Social',
+        'Éducation & Formation',
+        'Administration & Secrétariat',
+        'Sécurité & Gardiennage',
+        'Autre',
     ];
 
     protected function casts(): array
@@ -29,15 +60,24 @@ class JobOffer extends Model
         return [
             'date_expiration' => 'date',
             'budget_salaire'  => 'integer',
+            'est_boostee'     => 'boolean',
+            'boost_expire_at' => 'datetime',
         ];
     }
 
     // ─── Scopes ─────────────────────────────────────────────────────────────
 
+    public function scopeBoostees(Builder $query): Builder
+    {
+        return $query->where('est_boostee', true)
+                     ->where('boost_expire_at', '>=', Carbon::now());
+    }
+
     public function scopePubliees(Builder $query): Builder
     {
         return $query->where('statut', 'publie')
-                     ->where('date_expiration', '>=', Carbon::today());
+                     ->where('date_expiration', '>=', Carbon::today())
+                     ->orderByRaw('est_boostee AND boost_expire_at >= ? DESC', [Carbon::now()]);
     }
 
     public function scopeExpirees(Builder $query): Builder
@@ -50,11 +90,23 @@ class JobOffer extends Model
         return $query->where('type_contrat', $type);
     }
 
+    public function scopeParMetier(Builder $query, string $metier): Builder
+    {
+        return $query->where('metier', $metier);
+    }
+
     // ─── Helpers ────────────────────────────────────────────────────────────
 
     public function estExpiree(): bool
     {
         return $this->date_expiration->isPast();
+    }
+
+    public function estActivementBoostee(): bool
+    {
+        return $this->est_boostee
+            && $this->boost_expire_at
+            && $this->boost_expire_at->isFuture();
     }
 
     public function budgetFormate(): string
@@ -86,6 +138,11 @@ class JobOffer extends Model
         };
     }
 
+    public function metierLabel(): string
+    {
+        return $this->metier ?: 'Non précisé';
+    }
+
     // ─── Relations ──────────────────────────────────────────────────────────
 
     public function institution(): BelongsTo
@@ -96,5 +153,10 @@ class JobOffer extends Model
     public function candidatures(): HasMany
     {
         return $this->hasMany(Candidature::class);
+    }
+
+    public function payments(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Payment::class, 'payable');
     }
 }

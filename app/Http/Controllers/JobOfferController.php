@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Gate;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class JobOfferController extends Controller
 {
@@ -25,13 +26,28 @@ class JobOfferController extends Controller
             $query->parType($request->type);
         }
 
+        if ($request->filled('metier')) {
+            $query->parMetier($request->metier);
+        }
+
         if ($request->filled('lieu')) {
             $query->where('lieu', 'like', '%' . $request->lieu . '%');
         }
 
-        $offres = $query->paginate(12)->withQueryString();
+        if ($request->filled('q')) {
+            $q = $request->q;
+            $query->where(function ($sub) use ($q) {
+                $sub->where('titre', 'like', "%$q%")
+                    ->orWhere('description', 'like', "%$q%")
+                    ->orWhere('metier', 'like', "%$q%")
+                    ->orWhere('lieu', 'like', "%$q%");
+            });
+        }
 
-        return view('job-offers.index', compact('offres'));
+        $offres = $query->paginate(12)->withQueryString();
+        $metiers = JobOffer::METIERS;
+
+        return view('job-offers.index', compact('offres', 'metiers'));
     }
 
     public function show(JobOffer $jobOffer): View
@@ -49,8 +65,9 @@ class JobOfferController extends Controller
 
     public function create(): View
     {
-        $institutions = auth()->user()->institutions()->get();
-        return view('job-offers.create', compact('institutions'));
+        $institutions = auth()->user()->institutions()->verifiees()->get();
+        $metiers = JobOffer::METIERS;
+        return view('job-offers.create', compact('institutions', 'metiers'));
     }
 
     public function store(StoreJobOfferRequest $request): RedirectResponse
@@ -61,19 +78,30 @@ class JobOfferController extends Controller
         $institution = Institution::findOrFail($validated['institution_id']);
         Gate::authorize('manage', $institution);
 
-        $validated['statut'] = 'en_attente';
+        if (! $institution->estVerifiee()) {
+            return back()->withInput()->with(
+                'error',
+                'Votre institution doit d\'abord être vérifiée par un administrateur avant de pouvoir publier une offre.'
+            );
+        }
+
+        // L'institution est déjà vérifiée à ce stade (contrôle ci-dessus) :
+        // ses offres se publient donc automatiquement, sans étape de
+        // modération supplémentaire par offre.
+        $validated['statut'] = 'publie';
 
         JobOffer::create($validated);
 
         return redirect()->route('dashboard')
-            ->with('success', 'Offre créée. Elle sera publiée après modération.');
+            ->with('success', 'Offre publiée avec succès.');
     }
 
     public function edit(JobOffer $jobOffer): View
     {
         Gate::authorize('manage', $jobOffer->institution);
         $institutions = auth()->user()->institutions()->get();
-        return view('job-offers.edit', compact('jobOffer', 'institutions'));
+        $metiers = JobOffer::METIERS;
+        return view('job-offers.edit', compact('jobOffer', 'institutions', 'metiers'));
     }
 
     public function update(UpdateJobOfferRequest $request, JobOffer $jobOffer): RedirectResponse
@@ -91,5 +119,45 @@ class JobOfferController extends Controller
         $jobOffer->delete();
 
         return redirect()->route('dashboard')->with('success', 'Offre supprimée.');
+    }
+
+    /**
+     * Liste de tous les candidats ayant postulé à une offre, avec accès aux
+     * documents (CV / lettre de motivation) et export PDF de la liste.
+     */
+    public function candidats(JobOffer $jobOffer): View
+    {
+        Gate::authorize('manage', $jobOffer->institution);
+
+        $jobOffer->load('institution');
+
+        $candidatures = $jobOffer->candidatures()
+            ->with('user')
+            ->latest()
+            ->get();
+
+        return view('job-offers.candidats', compact('jobOffer', 'candidatures'));
+    }
+
+    /**
+     * Génère et télécharge la liste des candidats d'une offre au format PDF.
+     */
+    public function candidatsPdf(JobOffer $jobOffer)
+    {
+        Gate::authorize('manage', $jobOffer->institution);
+
+        $jobOffer->load('institution');
+
+        $candidatures = $jobOffer->candidatures()
+            ->with('user')
+            ->latest()
+            ->get();
+
+        $pdf = Pdf::loadView('job-offers.candidats-pdf', compact('jobOffer', 'candidatures'))
+            ->setPaper('a4', 'portrait');
+
+        $nomFichier = 'candidats-' . \Illuminate\Support\Str::slug($jobOffer->titre) . '.pdf';
+
+        return $pdf->download($nomFichier);
     }
 }

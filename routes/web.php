@@ -10,9 +10,11 @@ use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\ProcedureController;
 use App\Http\Controllers\RequirementController;
 use App\Http\Controllers\JobOfferController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\CandidatureController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchController;
 
 // ─── Authentification (invités uniquement) ───────────────────────────────────
 
@@ -59,6 +61,8 @@ Route::get('/offres/{jobOffer}', [JobOfferController::class, 'show'])->name('job
 Route::get('/artisans', [JobApplicationController::class, 'index'])->name('job-applications.index');
 Route::get('/artisans/{jobApplication}', [JobApplicationController::class, 'show'])->name('job-applications.show');
 
+Route::get('/recherche', [SearchController::class, 'index'])->name('search');
+
 // ─── Espace connecté (auth + 2FA validé) ─────────────────────────────────────
 
 Route::middleware(['auth', 'two_factor'])->group(function () {
@@ -93,6 +97,18 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::get('/mes-candidatures', [CandidatureController::class, 'index'])->name('index');
     });
 
+    // ── Documents de candidature (CV / lettre) — candidat propriétaire ou recruteur ──
+
+    Route::prefix('candidatures')->name('candidatures.')->group(function () {
+        Route::get('/{candidature}/cv', [CandidatureController::class, 'downloadCv'])->name('download-cv');
+        Route::get('/{candidature}/lettre', [CandidatureController::class, 'downloadLettre'])->name('download-lettre');
+    });
+
+    // ── Justificatif d'institution — propriétaire ou admin ───────────────────
+
+    Route::get('/institutions/{institution:slug}/justificatif', [InstitutionController::class, 'downloadJustificatif'])
+        ->name('institutions.download-justificatif');
+
     // ── Gestion recruteur (recruteur uniquement) ──────────────────────────────
 
     Route::middleware('role:recruteur')->group(function () {
@@ -104,7 +120,6 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
             Route::put('/{institution:slug}', [InstitutionController::class, 'update'])->name('update');
             Route::delete('/{institution:slug}', [InstitutionController::class, 'destroy'])->name('destroy');
         });
-
         Route::prefix('demarches')->name('procedures.')->group(function () {
             Route::get('/creer', [ProcedureController::class, 'create'])->name('create');
             Route::post('/', [ProcedureController::class, 'store'])->name('store');
@@ -119,9 +134,19 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::prefix('mes-offres')->name('job-offers.')->group(function () {
             Route::get('/creer', [JobOfferController::class, 'create'])->name('create');
             Route::post('/', [JobOfferController::class, 'store'])->name('store');
+            Route::get('/{jobOffer}/candidats', [JobOfferController::class, 'candidats'])->name('candidats');
+            Route::get('/{jobOffer}/candidats/pdf', [JobOfferController::class, 'candidatsPdf'])->name('candidats.pdf');
             Route::get('/{jobOffer}/modifier', [JobOfferController::class, 'edit'])->name('edit');
             Route::put('/{jobOffer}', [JobOfferController::class, 'update'])->name('update');
             Route::delete('/{jobOffer}', [JobOfferController::class, 'destroy'])->name('destroy');
+        });
+
+        // ── Paiements : mise en avant (boost) d'une offre ─────────────────────
+
+        Route::prefix('mes-offres/{jobOffer}/boost')->name('paiements.')->group(function () {
+            Route::get('/', [PaymentController::class, 'boostForm'])->name('boost-form');
+            Route::post('/', [PaymentController::class, 'boostInitier'])->name('boost-initier');
+            Route::get('/retour', [PaymentController::class, 'retour'])->name('retour');
         });
 
         Route::patch('/candidatures/{candidature}/statut', [CandidatureController::class, 'updateStatut'])
@@ -135,6 +160,7 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::get('/users', [AdminController::class, 'users'])->name('users');
         Route::patch('/job-applications/{jobApplication}/moderer', [AdminController::class, 'modererProfil'])->name('moderer-profil');
         Route::patch('/job-offers/{jobOffer}/publier', [AdminController::class, 'publierOffre'])->name('publier-offre');
+        Route::patch('/institutions/{institution:slug}/verifier', [AdminController::class, 'verifierInstitution'])->name('verifier-institution');
         Route::delete('/users/{user}', [AdminController::class, 'supprimerUser'])->name('supprimer-user');
     });
 

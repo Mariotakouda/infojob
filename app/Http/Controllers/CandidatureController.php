@@ -8,7 +8,9 @@ use App\Models\Candidature;
 use App\Models\JobOffer;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CandidatureController extends Controller
 {
@@ -41,12 +43,27 @@ class CandidatureController extends Controller
 
         $validated = $request->validated();
 
-        Candidature::create([
+        $data = [
             'user_id'             => auth()->id(),
             'job_offer_id'        => $jobOffer->id,
             'note_motivation'     => $validated['note_motivation'] ?? null,
             'statut_candidature'  => 'recue',
-        ]);
+        ];
+
+        // Le CV et la lettre de motivation sont optionnels (nullable).
+        if ($request->hasFile('cv')) {
+            $file = $request->file('cv');
+            $data['cv_path']         = $file->store('candidatures/cv', 'local');
+            $data['cv_nom_original'] = $file->getClientOriginalName();
+        }
+
+        if ($request->hasFile('lettre_motivation')) {
+            $file = $request->file('lettre_motivation');
+            $data['lettre_motivation_path']         = $file->store('candidatures/lettres', 'local');
+            $data['lettre_motivation_nom_original'] = $file->getClientOriginalName();
+        }
+
+        Candidature::create($data);
 
         return back()->with('success', 'Votre candidature a bien été envoyée.');
     }
@@ -60,6 +77,13 @@ class CandidatureController extends Controller
 
         if ($candidature->statut_candidature !== 'recue') {
             return back()->with('error', 'Vous ne pouvez plus retirer cette candidature.');
+        }
+
+        if ($candidature->cv_path) {
+            Storage::disk('local')->delete($candidature->cv_path);
+        }
+        if ($candidature->lettre_motivation_path) {
+            Storage::disk('local')->delete($candidature->lettre_motivation_path);
         }
 
         $candidature->delete();
@@ -79,5 +103,48 @@ class CandidatureController extends Controller
         $candidature->update($request->validated());
 
         return back()->with('success', 'Statut de la candidature mis à jour.');
+    }
+
+    /**
+     * Téléchargement d'un document (CV ou lettre de motivation) d'une
+     * candidature. Accessible au candidat propriétaire ainsi qu'au
+     * recruteur propriétaire de l'institution liée à l'offre.
+     */
+    public function downloadCv(Candidature $candidature): StreamedResponse
+    {
+        $this->authorizeDocumentAccess($candidature);
+
+        if (! $candidature->aCv()) {
+            abort(404);
+        }
+
+        return Storage::disk('local')->download(
+            $candidature->cv_path,
+            $candidature->cv_nom_original ?? 'cv.pdf'
+        );
+    }
+
+    public function downloadLettre(Candidature $candidature): StreamedResponse
+    {
+        $this->authorizeDocumentAccess($candidature);
+
+        if (! $candidature->aLettreMotivation()) {
+            abort(404);
+        }
+
+        return Storage::disk('local')->download(
+            $candidature->lettre_motivation_path,
+            $candidature->lettre_motivation_nom_original ?? 'lettre-de-motivation.pdf'
+        );
+    }
+
+    private function authorizeDocumentAccess(Candidature $candidature): void
+    {
+        $estProprietaire = $candidature->user_id === auth()->id();
+        $estRecruteurProprietaire = $candidature->jobOffer->institution->user_id === auth()->id();
+
+        if (! $estProprietaire && ! $estRecruteurProprietaire) {
+            abort(403);
+        }
     }
 }

@@ -48,12 +48,16 @@ class TwoFactorController extends Controller
 
         $request->session()->put('two_factor_verified', true);
 
-        // Redirection selon le rôle après validation 2FA
-        return match ($user->role) {
-            'admin'     => redirect()->route('admin.index'),
-            'recruteur' => redirect()->route('dashboard'),
-            default     => redirect()->route('job-offers.index'),
+        // Si l'utilisateur venait d'une page précise (ex : une offre
+        // d'emploi) avant de devoir se connecter, on l'y renvoie directement
+        // plutôt que vers le tableau de bord générique.
+        $default = match ($user->role) {
+            'admin'     => route('admin.index'),
+            'recruteur' => route('dashboard'),
+            default     => route('job-offers.index'),
         };
+
+        return redirect()->intended($default);
     }
 
     public static function generateAndSendCode(\App\Models\User $user): void

@@ -43,7 +43,7 @@ class ProcedureController extends Controller
 
     public function create(): View
     {
-        $institutions = auth()->user()->institutions()->get(['id', 'nom']);
+        $institutions = auth()->user()->institutions()->verifiees()->get(['id', 'nom']);
 
         return view('procedures.create', compact('institutions'));
     }
@@ -54,6 +54,13 @@ class ProcedureController extends Controller
 
         // Vérifie que l'institution appartient au recruteur
         $institution = auth()->user()->institutions()->findOrFail($validated['institution_id']);
+
+        if (! $institution->estVerifiee()) {
+            return back()->withInput()->with(
+                'error',
+                'Votre institution doit d\'abord être vérifiée par un administrateur avant de pouvoir publier une démarche.'
+            );
+        }
 
         $procedure = $institution->procedures()->create($validated);
 

@@ -6,7 +6,9 @@ use App\Http\Requests\InstitutionRequest;
 use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class InstitutionController extends Controller
 {
@@ -53,10 +55,28 @@ class InstitutionController extends Controller
 
     public function store(InstitutionRequest $request): RedirectResponse
     {
-        $institution = $request->user()->institutions()->create($request->validated());
+        $validated = $request->validated();
 
-        return redirect()->route('institutions.show', $institution)
-            ->with('success', 'Institution créée avec succès.');
+        if ($request->hasFile('document_justificatif')) {
+            $file = $request->file('document_justificatif');
+            $validated['document_justificatif_path']         = $file->store('institutions/justificatifs', 'local');
+            $validated['document_justificatif_nom_original']  = $file->getClientOriginalName();
+        }
+
+        // Toute institution — publique ou privée — passe désormais par une
+        // vérification admin obligatoire avant de pouvoir publier des offres
+        // ou des démarches. Aucun type n'est auto-vérifié à l'inscription.
+        $validated['statut_verification'] = 'en_attente';
+        $validated['verifiee_at']         = null;
+        $validated['verifiee_par']        = null;
+
+        $institution = $request->user()->institutions()->create($validated);
+
+        $message = 'Institution créée avec succès. Elle sera visible avec le badge « Vérifiée » dès validation '
+            . 'de votre justificatif par un administrateur. En attendant, vous ne pourrez pas publier d\'offres '
+            . 'ni de démarches.';
+
+        return redirect()->route('institutions.show', $institution)->with('success', $message);
     }
 
     public function edit(Institution $institution): View
@@ -70,7 +90,32 @@ class InstitutionController extends Controller
     {
         $this->authorizeOwner($institution);
 
-        $institution->update($request->validated());
+        $validated = $request->validated();
+
+        if ($request->hasFile('document_justificatif')) {
+            if ($institution->document_justificatif_path) {
+                Storage::disk('local')->delete($institution->document_justificatif_path);
+            }
+            $file = $request->file('document_justificatif');
+            $validated['document_justificatif_path']        = $file->store('institutions/justificatifs', 'local');
+            $validated['document_justificatif_nom_original'] = $file->getClientOriginalName();
+        }
+
+        $infosIdentiteChangees = $institution->nom !== $validated['nom']
+            || $institution->type !== $validated['type']
+            || $institution->numero_identification !== $validated['numero_identification'];
+
+        // Toute institution — publique ou privée — repasse par une
+        // vérification admin si son identité change ou si elle envoie un
+        // nouveau justificatif. Aucun type n'est dispensé de contrôle.
+        if (! $institution->estVerifiee() || $infosIdentiteChangees || $request->hasFile('document_justificatif')) {
+            $validated['statut_verification'] = 'en_attente';
+            $validated['motif_rejet']         = null;
+            $validated['verifiee_at']         = null;
+            $validated['verifiee_par']        = null;
+        }
+
+        $institution->update($validated);
 
         return redirect()->route('institutions.show', $institution)
             ->with('success', 'Institution mise à jour.');
@@ -80,10 +125,37 @@ class InstitutionController extends Controller
     {
         $this->authorizeOwner($institution);
 
+        if ($institution->document_justificatif_path) {
+            Storage::disk('local')->delete($institution->document_justificatif_path);
+        }
+
         $institution->delete();
 
         return redirect()->route('dashboard')
             ->with('success', 'Institution supprimée.');
+    }
+
+    /**
+     * Téléchargement du justificatif — réservé au propriétaire de
+     * l'institution et aux administrateurs (utilisé lors de la modération).
+     */
+    public function downloadJustificatif(Institution $institution): StreamedResponse
+    {
+        $estProprietaire = $institution->user_id === auth()->id();
+        $estAdmin        = auth()->user()->isAdmin();
+
+        if (! $estProprietaire && ! $estAdmin) {
+            abort(403);
+        }
+
+        if (! $institution->aDocumentJustificatif()) {
+            abort(404);
+        }
+
+        return Storage::disk('local')->download(
+            $institution->document_justificatif_path,
+            $institution->document_justificatif_nom_original ?? 'justificatif.pdf'
+        );
     }
 
     // ─── Helper ──────────────────────────────────────────────────────────────

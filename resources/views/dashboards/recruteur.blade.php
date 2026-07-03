@@ -115,9 +115,15 @@
                             class="text-xs font-medium text-gray-900 hover:text-blue-600 transition-colors">
                             {{ $institution->nom }}
                         </a>
-                        <p class="text-[11px] text-gray-400 mt-0.5">
+                        <p class="text-[11px] text-gray-400 mt-0.5 flex items-center gap-1.5 flex-wrap">
                             {{ $institution->typeLabel() }} · {{ $institution->ville }}
+                            <span class="text-[10px] font-medium px-1.5 py-0.5 rounded-full {{ $institution->statutVerificationBadgeClass() }}">
+                                {{ $institution->statutVerificationLabel() }}
+                            </span>
                         </p>
+                        @if($institution->estRejetee() && $institution->motif_rejet)
+                            <p class="text-[11px] text-red-500 mt-1">Motif du refus : {{ $institution->motif_rejet }}</p>
+                        @endif
                     </div>
                     <div class="flex items-center gap-3 text-[11px] text-gray-400">
                         <span>{{ $institution->jobOffers->count() }} offre(s)</span>
@@ -268,7 +274,10 @@
                 </a>
                 <p class="text-[11px] text-gray-400 mt-0.5">
                     {{ $offre->institution->nom }}
-                    · {{ $offre->candidatures->count() }} candidature(s)
+                    ·
+                    <a href="{{ route('job-offers.candidats', $offre) }}" class="text-blue-500 hover:text-blue-700 hover:underline">
+                        {{ $offre->candidatures->count() }} candidature(s)
+                    </a>
                 </p>
             </div>
             <div class="flex items-center gap-2">
@@ -276,6 +285,11 @@
                     {{ $offre->statut === 'publie' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700' }}">
                     {{ $offre->statut === 'publie' ? 'Publiée' : 'En attente' }}
                 </span>
+                <a href="{{ route('job-offers.candidats', $offre) }}"
+                    class="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md border border-gray-200 bg-transparent text-gray-500 hover:bg-gray-50 transition-colors">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
+                    Candidats
+                </a>
                 <a href="{{ route('job-offers.edit', $offre) }}"
                     class="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md border border-gray-200 bg-transparent text-gray-500 hover:bg-gray-50 transition-colors">
                     <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" /></svg>

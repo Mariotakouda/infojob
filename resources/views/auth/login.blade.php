@@ -17,6 +17,9 @@
         <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
             <form method="POST" action="{{ route('login') }}" class="space-y-5">
                 @csrf
+                @if($redirect ?? null)
+                    <input type="hidden" name="redirect" value="{{ $redirect }}">
+                @endif
 
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Adresse email</label>
