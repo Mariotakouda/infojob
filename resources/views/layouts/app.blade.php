@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png" href="{{ asset('images/logo1.png') }}">
     <title>@yield('title', 'TravailTogo') - Plateforme emploi et démarches administratives au Togo</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -97,6 +97,21 @@
         @media (prefers-reduced-motion: reduce) {
             *, .stagger > * { animation: none !important; transition: none !important; }
         }
+
+        /* Menu mobile : transition d'ouverture/fermeture */
+        #mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        #mobile-menu.open {
+            max-height: 500px;
+        }
+
+        /* Icônes burger <-> croix */
+        #menu-icon-open, #menu-icon-close {
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
     </style>
     @stack('styles')
 </head>
@@ -111,15 +126,16 @@
                     <img src="{{ asset('images/logo1.png') }}" alt="TravailTogo" class="h-10">
                 </a>
 
-                {{-- Liens principaux --}}
+                {{-- Liens principaux (desktop) --}}
                 <div class="hidden md:flex items-center gap-7 text-sm font-medium text-gray-600">
-                    <a href="{{ route('job-offers.index') }}"     class="nav-link hover:text-primary transition-colors">Offres d'emploi</a>
-                    <a href="{{ route('procedures.index') }}"     class="nav-link hover:text-primary transition-colors">Démarches</a>
-                    <a href="{{ route('job-applications.index') }}" class="nav-link hover:text-primary transition-colors">Artisans</a>
-                    <a href="{{ route('institutions.index') }}"   class="nav-link hover:text-primary transition-colors">Institutions</a>
+                    <a href="{{ route('home') }}"                    class="nav-link hover:text-primary transition-colors">Accueil</a>
+                    <a href="{{ route('job-offers.index') }}"        class="nav-link hover:text-primary transition-colors">Offres d'emploi</a>
+                    <a href="{{ route('procedures.index') }}"        class="nav-link hover:text-primary transition-colors">Démarches</a>
+                    <a href="{{ route('job-applications.index') }}"  class="nav-link hover:text-primary transition-colors">Artisans</a>
+                    <a href="{{ route('institutions.index') }}"      class="nav-link hover:text-primary transition-colors">Institutions</a>
                 </div>
 
-                {{-- Auth --}}
+                {{-- Auth (desktop) + bouton burger (mobile) --}}
                 <div class="flex items-center gap-3">
                     <a href="{{ route('search') }}" title="Rechercher"
                         class="hidden sm:inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-500 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all duration-200">
@@ -127,32 +143,71 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                         </svg>
                     </a>
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="text-sm text-gray-600 hover:text-primary font-medium transition-colors hidden sm:inline border border-gray-200 hover:border-primary px-3 py-1.5 rounded-lg transition-all duration-200 hover:bg-primary/5">
-                             {{ auth()->user()->name }}
-                        </a>
-                        <a href="{{ route('profile.edit') }}"
-                           title="Mon profil"
-                           class="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-primary font-medium border border-gray-200 hover:border-primary px-3 py-1.5 rounded-lg transition-all duration-200 hover:bg-primary/5">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                            </svg>
-                            Mon profil
-                        </a>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition-colors duration-200">
-                                Déconnexion
-                            </button>
-                        </form>
-                    @else
-                        <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-primary font-medium transition-colors">Connexion</a>
-                        <a href="{{ route('register') }}" class="text-sm bg-primary text-white hover:bg-primary-dark px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-md hover:shadow-primary/20">
-                            S'inscrire
-                        </a>
-                    @endauth
+
+                    {{-- Bloc auth : toujours visible, même sur mobile --}}
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        @auth
+                            <a href="{{ route('dashboard') }}" class="hidden lg:inline text-sm text-gray-600 hover:text-primary font-medium transition-colors border border-gray-200 hover:border-primary px-3 py-1.5 rounded-lg transition-all duration-200 hover:bg-primary/5">
+                                 {{ auth()->user()->name }}
+                            </a>
+                            <a href="{{ route('profile.edit') }}"
+                               title="Mon profil"
+                               class="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-primary font-medium border border-gray-200 hover:border-primary px-2.5 sm:px-3 py-1.5 rounded-lg transition-all duration-200 hover:bg-primary/5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                </svg>
+                                <span class="hidden sm:inline">Mon profil</span>
+                            </a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="text-sm bg-gray-100 hover:bg-gray-200 px-2.5 sm:px-3 py-1.5 rounded-lg transition-colors duration-200">
+                                    Déconnexion
+                                </button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-primary font-medium transition-colors px-1">Connexion</a>
+                            <a href="{{ route('register') }}" class="text-sm bg-primary text-white hover:bg-primary-dark px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-md hover:shadow-primary/20 whitespace-nowrap">
+                                S'inscrire
+                            </a>
+                        @endauth
+                    </div>
+
+                    {{-- Bouton hamburger, visible uniquement en mobile --}}
+                    <button
+                        id="menu-toggle"
+                        type="button"
+                        aria-label="Ouvrir le menu"
+                        aria-expanded="false"
+                        aria-controls="mobile-menu"
+                        class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 text-gray-600 hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all duration-200"
+                    >
+                        <svg id="menu-icon-open" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+                        </svg>
+                        <svg id="menu-icon-close" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
 
+            </div>
+        </div>
+
+        {{-- Menu mobile déroulant --}}
+        <div id="mobile-menu" class="md:hidden border-t border-gray-100 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-1 text-sm font-medium text-gray-600">
+                <a href="{{ route('home') }}"                   class="px-3 py-2.5 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors">Accueil</a>
+                <a href="{{ route('job-offers.index') }}"       class="px-3 py-2.5 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors">Offres d'emploi</a>
+                <a href="{{ route('procedures.index') }}"       class="px-3 py-2.5 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors">Démarches</a>
+                <a href="{{ route('job-applications.index') }}" class="px-3 py-2.5 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors">Artisans</a>
+                <a href="{{ route('institutions.index') }}"     class="px-3 py-2.5 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors">Institutions</a>
+                <a href="{{ route('search') }}"                 class="px-3 py-2.5 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors">Rechercher</a>
+                @auth
+                    <div class="border-t border-gray-100 my-2"></div>
+                    <a href="{{ route('dashboard') }}" class="px-3 py-2.5 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors">
+                        {{ auth()->user()->name }}
+                    </a>
+                @endauth
             </div>
         </div>
     </nav>
@@ -193,6 +248,36 @@
         window.addEventListener('scroll', () => {
             nav.classList.toggle('nav-scrolled', window.scrollY > 20);
         }, { passive: true });
+
+        // Menu mobile : ouverture / fermeture
+        const menuToggle   = document.getElementById('menu-toggle');
+        const mobileMenu   = document.getElementById('mobile-menu');
+        const iconOpen     = document.getElementById('menu-icon-open');
+        const iconClose    = document.getElementById('menu-icon-close');
+
+        function setMenuState(open) {
+            mobileMenu.classList.toggle('open', open);
+            iconOpen.classList.toggle('hidden', open);
+            iconClose.classList.toggle('hidden', !open);
+            menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+
+        menuToggle.addEventListener('click', () => {
+            const isOpen = mobileMenu.classList.contains('open');
+            setMenuState(!isOpen);
+        });
+
+        // Ferme le menu automatiquement si on repasse en desktop (resize)
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                setMenuState(false);
+            }
+        });
+
+        // Ferme le menu après un clic sur un lien (mobile)
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => setMenuState(false));
+        });
     </script>
 
     @stack('scripts')

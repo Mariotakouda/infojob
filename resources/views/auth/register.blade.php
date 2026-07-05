@@ -68,18 +68,18 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Je suis</label>
                     <div class="grid grid-cols-2 gap-3">
-                        <label class="flex items-center gap-3 border border-gray-200 rounded-lg p-3 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-green-50 transition-colors">
-                            <input type="radio" name="role" value="citoyen" {{ old('role', 'citoyen') === 'citoyen' ? 'checked' : '' }} class="text-primary">
-                            <div>
-                                <p class="text-sm font-medium text-gray-800">Citoyen/Artisan</p>
-                                <p class="text-xs text-gray-500">Je cherche du travail</p>
+                        <label class="min-w-0 flex items-center gap-2 border border-gray-200 rounded-lg p-3 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-green-50 transition-colors overflow-hidden">
+                            <input type="radio" name="role" value="citoyen" {{ old('role', 'citoyen') === 'citoyen' ? 'checked' : '' }} class="text-primary shrink-0">
+                            <div class="min-w-0">
+                                <p class="text-xs font-medium text-gray-800 break-words leading-tight">Citoyen/Artisan</p>
+                                <p class="text-[11px] text-gray-500 break-words leading-tight">Je cherche du travail</p>
                             </div>
                         </label>
-                        <label class="flex items-center gap-3 border border-gray-200 rounded-lg p-3 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-green-50 transition-colors">
-                            <input type="radio" name="role" value="recruteur" {{ old('role') === 'recruteur' ? 'checked' : '' }} class="text-primary">
-                            <div>
-                                <p class="text-sm font-medium text-gray-800">Recruteur/Institution</p>
-                                <p class="text-xs text-gray-500">Je publie des offres</p>
+                        <label class="min-w-0 flex items-center gap-2 border border-gray-200 rounded-lg p-3 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-green-50 transition-colors overflow-hidden">
+                            <input type="radio" name="role" value="recruteur" {{ old('role') === 'recruteur' ? 'checked' : '' }} class="text-primary shrink-0">
+                            <div class="min-w-0">
+                                <p class="text-xs font-medium text-gray-800 break-words leading-tight">Recruteur/Institution</p>
+                                <p class="text-[11px] text-gray-500 break-words leading-tight">Je publie des offres</p>
                             </div>
                         </label>
                     </div>
