@@ -1,0 +1,53 @@
+﻿databases:
+  - name: togoinfo-db
+    plan: free
+    databaseName: togoinfo
+    user: togoinfo
+
+services:
+  - type: web
+    name: togoinfo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_NAME
+        value: TogoInfo
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        sync: false
+      - key: APP_KEY
+        generateValue: true
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: togoinfo-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: togoinfo-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: togoinfo-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: togoinfo-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: togoinfo-db
+          property: password
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
