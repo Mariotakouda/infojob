@@ -45,31 +45,12 @@ RUN printf '<Directory /var/www/html/public>\n\tAllowOverride All\n</Directory>\
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-RUN printf '%s\n' \
-    '#!/bin/bash' \
-    'set -e' \
-    '' \
-    'cd /var/www/html' \
-    '' \
-    'if [ -z "$APP_KEY" ]; then' \
-    '    php artisan key:generate --force' \
-    'fi' \
-    '' \
-    'php artisan config:cache' \
-    'php artisan route:cache' \
-    'php artisan view:cache' \
-    '' \
-    'php artisan storage:link || true' \
-    '' \
-    'php artisan migrate --force' \
-    '' \
-    'if [ "$RUN_ADMIN_SEED" = "true" ]; then' \
-    '    echo ">>> RUN_ADMIN_SEED=true : lancement du seeder admin"' \
-    '    php artisan db:seed --class=AdministrationSeeder --force || true' \
-    'fi' \
-    '' \
-    'exec apache2-foreground' \
-    > /usr/local/bin/docker-entrypoint.sh \
+# Script de démarrage du container (copié depuis le repo)
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+# Filet de sécurité : force des fins de ligne Unix (LF) même si le fichier a
+# été sauvegardé en CRLF par un éditeur Windows, puis rend le script exécutable.
+RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
     && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 RUN echo "=== DEBUG ===" \
