@@ -46,8 +46,6 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-# Convertit les fins de ligne CRLF (Windows) en LF (Unix) au cas ou,
-# sinon le shebang #!/bin/bash est invalide et Linux refuse d'executer le script
 RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
     && chmod +x /usr/local/bin/docker-entrypoint.sh
 
