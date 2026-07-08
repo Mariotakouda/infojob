@@ -27,7 +27,7 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 # Reste du code
 COPY . .
 
-# Assets compiles par le stage precedent
+# Assets compilés par le stage précédent
 COPY --from=assets /app/public/build ./public/build
 
 RUN composer dump-autoload --optimize
@@ -37,16 +37,19 @@ ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
     && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Autoriser .htaccess (necessaire pour les routes Laravel)
+# Autoriser .htaccess (nécessaire pour les routes Laravel)
 RUN printf '<Directory /var/www/html/public>\n\tAllowOverride All\n</Directory>\n' > /etc/apache2/conf-available/laravel.conf \
     && a2enconf laravel
 
-# Permissions pour que Laravel puisse ecrire dans storage/ et bootstrap/cache/
+# Permissions pour que Laravel puisse écrire dans storage/ et bootstrap/cache/
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# Convertit les fins de ligne CRLF (Windows) en LF (Unix) au cas ou,
+# sinon le shebang #!/bin/bash est invalide et Linux refuse d'executer le script
+RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
+    && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 80
 ENTRYPOINT ["docker-entrypoint.sh"]
