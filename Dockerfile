@@ -67,5 +67,11 @@ RUN printf '%s\n' \
     > /usr/local/bin/docker-entrypoint.sh \
     && chmod +x /usr/local/bin/docker-entrypoint.sh
 
+RUN echo "=== DEBUG ===" \
+    && uname -m \
+    && file /usr/local/bin/docker-entrypoint.sh \
+    && od -c /usr/local/bin/docker-entrypoint.sh | head -5 \
+    && echo "=== FIN DEBUG ==="
+
 EXPOSE 80
 ENTRYPOINT ["docker-entrypoint.sh"]
