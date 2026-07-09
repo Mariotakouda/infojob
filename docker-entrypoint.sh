@@ -20,4 +20,13 @@ if [ "$RUN_ADMIN_SEED" = "true" ]; then
     php artisan db:seed --class=AdministrationSeeder --force || true
 fi
 
+if [ -n "$NEW_ADMIN_EMAIL" ] && [ -n "$NEW_ADMIN_PASSWORD" ]; then
+    echo ">>> NEW_ADMIN_EMAIL défini : création d'un admin réel"
+    php artisan app:create-admin \
+        --name="${NEW_ADMIN_NAME:-Administrateur}" \
+        --email="$NEW_ADMIN_EMAIL" \
+        --password="$NEW_ADMIN_PASSWORD" \
+        --no-interaction || true
+fi
+
 exec apache2-foreground

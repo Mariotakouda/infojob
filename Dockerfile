@@ -1,5 +1,5 @@
 ﻿# ---- Stage 1 : build des assets front (Vite / Tailwind) ----
-FROM --platform=linux/amd64 node:20-alpine AS assets
+FROM node:20-alpine AS assets
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm install
@@ -7,7 +7,7 @@ COPY . .
 RUN npm run build
 
 # ---- Stage 2 : image PHP + Apache pour servir Laravel ----
-FROM --platform=linux/amd64 php:8.2-apache
+FROM php:8.2-apache
 
 # Extensions PHP nécessaires à Laravel (+ pgsql pour la base de données Render)
 RUN apt-get update && apt-get install -y \
