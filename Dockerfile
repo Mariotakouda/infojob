@@ -50,7 +50,7 @@ COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 # Filet de sécurité : force des fins de ligne Unix (LF) même si le fichier a
 # été sauvegardé en CRLF par un éditeur Windows, puis rend le script exécutable.
-RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
+RUN sed -i '1s/^\xEF\xBB\xBF//; s/\r$//' /usr/local/bin/docker-entrypoint.sh \
     && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 RUN echo "=== DEBUG ===" \
