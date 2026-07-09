@@ -95,20 +95,21 @@ class CreateAdminCommand extends Command
             return self::FAILURE;
         }
 
-        if (User::where('email', $email)->exists()) {
-            $this->warn("Un compte existe déjà avec l'email {$email} — aucune action effectuée.");
+        $existed = User::where('email', $email)->exists();
 
-            return self::SUCCESS;
-        }
+        User::updateOrCreate(
+            ['email' => $email],
+            [
+                'name'     => $name,
+                'password' => Hash::make($password),
+                'role'     => 'admin',
+            ]
+        );
 
-        User::create([
-            'name'     => $name,
-            'email'    => $email,
-            'password' => Hash::make($password),
-            'role'     => 'admin',
-        ]);
-
-        $this->info("Compte administrateur créé avec succès pour {$email}.");
+        $this->info($existed
+            ? "Compte existant {$email} mis à jour : rôle=admin, mot de passe réinitialisé."
+            : "Compte administrateur créé avec succès pour {$email}."
+        );
 
         return self::SUCCESS;
     }
