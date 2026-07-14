@@ -35,7 +35,7 @@
     </a>
     <a href="{{ route('job-applications.create') }}"
         class="border border-primary text-primary px-4 py-2 rounded-lg text-sm hover:bg-primary hover:text-white transition-colors">
-        + Créer un profil artisan
+        + Créer un profil professionnel 
     </a>
     <a href="{{ route('procedures.index') }}"
         class="border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
@@ -46,7 +46,7 @@
 {{-- ─── Mes profils / vitrines ─────────────────────────────────────────── --}}
 <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
     <div class="flex items-center justify-between mb-4">
-        <h2 class="font-semibold text-gray-900">Mes profils / vitrines artisan</h2>
+        <h2 class="font-semibold text-gray-900">Mes profils / vitrines professionnel  </h2>
         <a href="{{ route('job-applications.create') }}"
             class="text-sm bg-primary text-white px-4 py-1.5 rounded-lg hover:bg-primary-dark transition-colors">
             + Ajouter

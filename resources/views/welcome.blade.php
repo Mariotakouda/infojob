@@ -24,13 +24,13 @@
     {{-- Conteneur des images de fond --}}
     <div class="absolute inset-0 z-0 pointer-events-none">
         {{-- Image 1 --}}
-        <div class="absolute inset-0 bg-cover bg-center animate-slider-1" 
+        <div class="absolute inset-0 bg-cover bg-center animate-slider-1"
              style="background-image: url('{{ asset('images/img3.jpg') }}');"></div>
         {{-- Image 2 --}}
-        <div class="absolute inset-0 bg-cover bg-center opacity-0 animate-slider-2" 
+        <div class="absolute inset-0 bg-cover bg-center opacity-0 animate-slider-2"
              style="background-image: url('{{ asset('images/img1.jpg') }}');"></div>
         {{-- Image 3 --}}
-        <div class="absolute inset-0 bg-cover bg-center opacity-0 animate-slider-3" 
+        <div class="absolute inset-0 bg-cover bg-center opacity-0 animate-slider-3"
              style="background-image: url('{{ asset('images/img2.jpg') }}');"></div>
     </div>
 
@@ -46,12 +46,12 @@
 
         <h1 class="text-3xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight max-w-3xl animate-fade-up"
             style="animation-delay: 0.05s; text-shadow: 0 2px 16px rgba(0,0,0,0.3)">
-            Emploi, démarches administratives et profils artisanat<br class="hidden sm:block"> au cœur du Togo
+            Emploi, démarches administratives et profils professionnels<br class="hidden sm:block"> au cœur du Togo
         </h1>
 
         <p class="text-gray-200 mt-5 max-w-lg mx-auto text-base sm:text-lg leading-relaxed animate-fade-up"
            style="animation-delay: 0.15s">
-            InfoJob connecte citoyens, artisans, recruteurs et institutions sur une seule plateforme.
+            InfoJob connecte citoyens, professionnels, recruteurs et institutions sur une seule plateforme.
         </p>
 
         {{-- Barre de recherche rapide --}}
@@ -67,7 +67,7 @@
                         type="text"
                         name="q"
                         value="{{ request('q') }}"
-                        placeholder="Un emploi, une démarche, un artisan, une institution..."
+                        placeholder="Un emploi, une démarche, un professionnel, une institution..."
                         class="w-full px-3 py-4 text-sm sm:text-[15px] text-gray-800 placeholder-gray-400 focus:outline-none"
                     >
                     <button type="submit"
@@ -98,7 +98,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.83-5.83m-3.75 3.75l-2.73-2.73m-2.58 3.71c.057.142.16.257.296.32l3.437 1.611a1 1 0 001.341-.53l1.102-2.45a1 1 0 00-.158-1.077l-4.102-4.103a1 1 0 00-1.077-.158l-2.45 1.102a1 1 0 00-.53 1.341l1.611 3.437z" />
                     </svg>
-                    Artisans
+                    Les professionnels
                 </a>
                 <a href="{{ route('institutions.index') }}" class="inline-flex items-center gap-1.5 text-xs font-medium text-white/85 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 px-3 py-1.5 rounded-full transition-all duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -167,7 +167,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.83-5.83m-3.75 3.75-2.73-2.73m-2.58 3.71c.057.142.16.257.296.32l3.437 1.611a1 1 0 0 0 1.341-.53l1.102-2.45a1 1 0 0 0-.158-1.077l-4.102-4.103a1 1 0 0 0-1.077-.158l-2.45 1.102a1 1 0 0 0-.53 1.341l1.611 3.437Zm13.23-10.15a3.437 3.437 0 1 1-4.86 4.86 3.437 3.437 0 0 1 4.86-4.86ZM12.75 3.75l-.32 2.25m-6.42 2.25 2.25-.32m-2.25 6.42h2.25" />
                 </svg>
             </div>
-            <h2 class="font-semibold text-gray-900 group-hover:text-primary transition-colors duration-200 mb-1">Artisans</h2>
+            <h2 class="font-semibold text-gray-900 group-hover:text-primary transition-colors duration-200 mb-1">Professionnels</h2>
             <p class="text-sm text-gray-500 leading-relaxed">Trouvez un talent disponible près de chez vous.</p>
         </a>
 

@@ -131,7 +131,7 @@
                     <a href="{{ route('home') }}"                    class="nav-link hover:text-primary transition-colors">Accueil</a>
                     <a href="{{ route('job-offers.index') }}"        class="nav-link hover:text-primary transition-colors">Offres d'emploi</a>
                     <a href="{{ route('procedures.index') }}"        class="nav-link hover:text-primary transition-colors">Démarches</a>
-                    <a href="{{ route('job-applications.index') }}"  class="nav-link hover:text-primary transition-colors">Artisans</a>
+                    <a href="{{ route('job-applications.index') }}"  class="nav-link hover:text-primary transition-colors">Professionnels</a>
                     <a href="{{ route('institutions.index') }}"      class="nav-link hover:text-primary transition-colors">Institutions</a>
                 </div>
 
@@ -239,7 +239,7 @@
     {{-- Footer --}}
     <footer class="border-t border-gray-200 mt-16 py-10 text-center text-sm text-gray-400">
         <p class="font-medium text-gray-500 mb-1">InfoJob-Togo</p>
-        <p>© {{ date('Y') }} - Plateforme emploi, démarches & artisanat au Togo</p>
+        <p>© {{ date('Y') }} - Plateforme emploi, démarches & professionnels au Togo</p>
     </footer>
 
     <script>

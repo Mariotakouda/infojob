@@ -17,7 +17,7 @@
     <div class="bg-white border border-gray-200 rounded-xl p-6">
         <h1 class="text-xl font-bold text-gray-900 mb-1">Ajouter une institution</h1>
         <p class="text-sm text-gray-500 mb-6">
-            Toute institution — publique ou privée — est vérifiée manuellement par un administrateur avant de
+            Toute institution - publique ou privée - est vérifiée manuellement par un administrateur avant de
             pouvoir publier des offres ou des démarches. La nature du justificatif demandé dépend simplement du type choisi.
         </p>
 
@@ -43,7 +43,23 @@
                         <option value="prefecture" data-public="1" {{ old('type') === 'prefecture' ? 'selected' : '' }}>Préfecture</option>
                         <option value="presidence" data-public="1" {{ old('type') === 'presidence' ? 'selected' : '' }}>Présidence</option>
                         <option value="direction" data-public="1" {{ old('type') === 'direction' ? 'selected' : '' }}>Direction</option>
+                        <option value="assemblee" data-public="1" {{ old('type') === 'assemblee' ? 'selected' : '' }}>Assemblée nationale</option>
+                        <option value="conseil_regional" data-public="1" {{ old('type') === 'conseil_regional' ? 'selected' : '' }}>Conseil régional</option>
+                        <option value="conseil_municipal" data-public="1" {{ old('type') === 'conseil_municipal' ? 'selected' : '' }}>Conseil municipal</option>
+                        <option value="tribunal" data-public="1" {{ old('type') === 'tribunal' ? 'selected' : '' }}>Tribunal</option>
+                        <option value="cour_supreme" data-public="1" {{ old('type') === 'cour_supreme' ? 'selected' : '' }}>Cour suprême</option>
+                        <option value="cour_constitutionnelle" data-public="1" {{ old('type') === 'cour_constitutionnelle' ? 'selected' : '' }}>Cour constitutionnelle</option>
+                        <option value="universite_publique" data-public="1" {{ old('type') === 'universite_publique' ? 'selected' : '' }}>Université publique</option>
+                        <option value="ecole_publique" data-public="1" {{ old('type') === 'ecole_publique' ? 'selected' : '' }}>École publique</option>
+                        <option value="hopital" data-public="1" {{ old('type') === 'hopital' ? 'selected' : '' }}>Hôpital public</option>
+                        <option value="centre_sante" data-public="1" {{ old('type') === 'centre_sante' ? 'selected' : '' }}>Centre de santé</option>
+                        <option value="police" data-public="1" {{ old('type') === 'police' ? 'selected' : '' }}>Police nationale</option>
+                        <option value="gendarmerie" data-public="1" {{ old('type') === 'gendarmerie' ? 'selected' : '' }}>Gendarmerie</option>
+                        <option value="douane" data-public="1" {{ old('type') === 'douane' ? 'selected' : '' }}>Douanes</option>
+                        <option value="impots" data-public="1" {{ old('type') === 'impots' ? 'selected' : '' }}>Direction des impôts</option>
+                        <option value="poste" data-public="1" {{ old('type') === 'poste' ? 'selected' : '' }}>La Poste</option>
                     </optgroup>
+
                     <optgroup label="Entité privée">
                         <option value="entreprise_privee" data-public="0" {{ old('type') === 'entreprise_privee' ? 'selected' : '' }}>Entreprise privée / Startup</option>
                         <option value="particulier" data-public="0" data-particulier="1" {{ old('type') === 'particulier' ? 'selected' : '' }}>Particulier</option>
