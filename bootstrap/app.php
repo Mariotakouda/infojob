@@ -12,6 +12,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Render fait transiter les requêtes via un proxy interne. Sans ceci,
+        // Laravel ne détecte pas que la connexion d'origine est en HTTPS et
+        // génère des liens/formulaires en http://, d'où l'avertissement
+        // "formulaire non sécurisé" du navigateur alors que le site est bien
+        // servi en HTTPS.
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'role'       => \App\Http\Middleware\CheckRole::class,
             'two_factor' => \App\Http\Middleware\TwoFactorMiddleware::class,
