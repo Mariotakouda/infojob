@@ -147,8 +147,11 @@
                     {{-- Bloc auth : toujours visible, même sur mobile --}}
                     <div class="flex items-center gap-2 sm:gap-3">
                         @auth
-                            <a href="{{ route('dashboard') }}" class="hidden lg:inline text-sm text-gray-600 hover:text-primary font-medium transition-colors border border-gray-200 hover:border-primary px-3 py-1.5 rounded-lg transition-all duration-200 hover:bg-primary/5">
-                                 {{ auth()->user()->name }}
+                            <a href="{{ route('dashboard') }}" class="hidden lg:inline-flex items-center gap-2 text-sm text-gray-600 hover:text-primary font-medium transition-colors border border-gray-200 hover:border-primary px-3 py-1.5 rounded-lg transition-all duration-200 hover:bg-primary/5">
+                                @if(auth()->user()->photo)
+                                    <img src="{{ auth()->user()->photoUrl() }}" alt="" class="w-5 h-5 rounded-full object-cover">
+                                @endif
+                                {{ auth()->user()->name }}
                             </a>
                             <a href="{{ route('profile.edit') }}"
                                title="Mon profil"

@@ -17,7 +17,7 @@
     <div class="bg-white border border-gray-200 rounded-xl p-6">
         <h1 class="text-xl font-bold text-gray-900 mb-6">Modifier l'offre</h1>
 
-        <form method="POST" action="{{ route('job-offers.update', $jobOffer) }}" class="space-y-5">
+        <form method="POST" action="{{ route('job-offers.update', $jobOffer) }}" enctype="multipart/form-data" class="space-y-5">
             @csrf
             @method('PUT')
 
@@ -40,6 +40,25 @@
                 <textarea name="description" rows="5" required
                     class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary @error('description') border-red-400 @enderror">{{ old('description', $jobOffer->description) }}</textarea>
                 @error('description')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Affiche de l'offre <span class="text-gray-400 font-normal">(optionnel)</span>
+                </label>
+                @if($jobOffer->affiche)
+                    <div class="flex items-center gap-3 mb-2">
+                        <img src="{{ $jobOffer->afficheUrl() }}" alt="Affiche actuelle" class="w-20 h-20 object-cover rounded-lg border border-gray-200">
+                        <label class="flex items-center gap-2 text-xs text-gray-500">
+                            <input type="checkbox" name="supprimer_affiche" value="1" class="rounded border-gray-300 text-primary">
+                            Supprimer l'affiche actuelle
+                        </label>
+                    </div>
+                @endif
+                <input type="file" name="affiche" accept="image/png,image/jpeg,image/webp"
+                    class="w-full text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-2 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-gray-100 file:text-gray-700 file:text-xs hover:file:bg-gray-200 @error('affiche') border-red-400 @enderror">
+                <p class="text-xs text-gray-400 mt-1">JPG, PNG ou WEBP, 4 Mo max.{{ $jobOffer->affiche ? ' Laisser vide pour conserver l’affiche actuelle.' : '' }}</p>
+                @error('affiche')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

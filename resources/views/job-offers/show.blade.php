@@ -17,6 +17,10 @@
 
         {{-- Contenu principal --}}
         <div class="lg:col-span-2 space-y-6">
+            @if($jobOffer->affiche)
+                <img src="{{ $jobOffer->afficheUrl() }}" alt="Affiche : {{ $jobOffer->titre }}"
+                     class="w-full max-h-96 object-cover rounded-xl border border-gray-200">
+            @endif
             <div class="bg-white border border-gray-200 rounded-xl p-6">
                 <div class="flex items-start justify-between gap-4">
                     <div>

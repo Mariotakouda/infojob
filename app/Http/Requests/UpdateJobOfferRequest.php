@@ -18,6 +18,7 @@ class UpdateJobOfferRequest extends FormRequest
         return [
             'titre'           => ['required', 'string', 'max:255'],
             'description'     => ['required', 'string'],
+            'affiche'         => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:4096'],
             'type_contrat'    => ['required', 'in:CDI,CDD,Stage,Prestation_Artisanale'],
             'metier'          => ['required', 'string', 'max:255'],
             'lieu'            => ['required', 'string', 'max:255'],
@@ -31,6 +32,9 @@ class UpdateJobOfferRequest extends FormRequest
         return [
             'titre.required'           => 'Le titre de l\'offre est obligatoire.',
             'description.required'     => 'La description est obligatoire.',
+            'affiche.image'            => 'Le fichier doit être une image.',
+            'affiche.mimes'            => 'Formats acceptés : JPG, PNG, WEBP.',
+            'affiche.max'              => 'L\'affiche ne doit pas dépasser 4 Mo.',
             'type_contrat.required'    => 'Veuillez sélectionner un type de contrat.',
             'type_contrat.in'          => 'Le type de contrat sélectionné n\'est pas valide.',
             'metier.required'          => 'Veuillez sélectionner le métier / la profession concerné(e).',

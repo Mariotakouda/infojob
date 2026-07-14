@@ -81,6 +81,9 @@
 @forelse($offres as $offre)
     <div class="card-lift bg-white border border-gray-200 rounded-xl p-5 mb-4 hover:border-primary transition-colors animate-fade-up">
         <div class="flex items-start justify-between gap-4">
+            @if($offre->affiche)
+                <img src="{{ $offre->afficheUrl() }}" alt="" class="hidden sm:block w-16 h-16 object-cover rounded-lg border border-gray-200 flex-shrink-0">
+            @endif
             <div class="flex-1">
                 <div class="flex items-center gap-2 mb-1 flex-wrap">
                     <span class="text-xs font-medium px-2 py-0.5 rounded-full

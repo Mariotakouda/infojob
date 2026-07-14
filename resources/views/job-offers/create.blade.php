@@ -25,7 +25,7 @@
                 <a href="{{ route('dashboard') }}" class="underline font-medium">Voir le statut de mes institutions</a>
             </div>
         @else
-        <form method="POST" action="{{ route('job-offers.store') }}" class="space-y-5">
+        <form method="POST" action="{{ route('job-offers.store') }}" enctype="multipart/form-data" class="space-y-5">
             @csrf
 
             <div>
@@ -54,6 +54,16 @@
                     placeholder="Décrivez le poste, les missions ou les travaux à réaliser..."
                     class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary @error('description') border-red-400 @enderror">{{ old('description') }}</textarea>
                 @error('description')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Affiche de l'offre <span class="text-gray-400 font-normal">(optionnel)</span>
+                </label>
+                <input type="file" name="affiche" accept="image/png,image/jpeg,image/webp"
+                    class="w-full text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-2 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-gray-100 file:text-gray-700 file:text-xs hover:file:bg-gray-200 @error('affiche') border-red-400 @enderror">
+                <p class="text-xs text-gray-400 mt-1">Une image (flyer, visuel...) affichée en haut de l'annonce. JPG, PNG ou WEBP, 4 Mo max.</p>
+                @error('affiche')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -20,9 +20,28 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('profile.update-info') }}" class="space-y-4">
+        <form method="POST" action="{{ route('profile.update-info') }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
             @method('PATCH')
+
+            <div class="flex items-center gap-4">
+                @if($user->photo)
+                    <img src="{{ $user->photoUrl() }}" alt="{{ $user->name }}" class="w-14 h-14 rounded-full object-cover border border-gray-200">
+                @else
+                    <div class="w-14 h-14 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 shrink-0">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                    </div>
+                @endif
+                <label class="cursor-pointer text-sm text-primary font-medium border border-gray-300 rounded-lg px-3 py-2 hover:bg-gray-50 transition-colors">
+                    {{ $user->photo ? 'Changer la photo' : 'Ajouter une photo' }}
+                    <input type="file" name="photo" accept="image/png,image/jpeg,image/webp" class="hidden" onchange="this.form.requestSubmit()">
+                </label>
+            </div>
+            @error('photo')
+                <p class="text-red-500 text-xs -mt-2">{{ $message }}</p>
+            @enderror
 
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
@@ -41,14 +60,23 @@
 
             <div>
                 <label for="telephone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
-                <input
-                    type="text"
-                    id="telephone"
-                    name="telephone"
-                    value="{{ old('telephone', $user->telephone) }}"
-                    placeholder="+228 90 00 00 00"
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent @error('telephone') border-red-400 @enderror"
-                >
+                <div class="flex rounded-lg border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-primary @error('telephone') border-red-400 @enderror">
+                    <span class="flex items-center gap-1.5 bg-gray-50 border-r border-gray-300 px-3 text-sm text-gray-600 select-none">
+                        <span class="text-base leading-none">🇹🇬</span> +228
+                    </span>
+                    <input
+                        type="tel"
+                        id="telephone"
+                        name="telephone"
+                        inputmode="numeric"
+                        maxlength="8"
+                        pattern="[0-9]{8}"
+                        title="8 chiffres, sans le +228"
+                        value="{{ old('telephone', $user->telephone ? preg_replace('/\D/', '', substr($user->telephone, 4)) : '') }}"
+                        placeholder="90 00 00 00"
+                        class="w-full border-0 px-3 py-2.5 text-sm focus:outline-none focus:ring-0"
+                    >
+                </div>
                 @error('telephone')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror

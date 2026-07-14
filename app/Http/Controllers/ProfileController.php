@@ -28,11 +28,27 @@ class ProfileController extends Controller
 
         $validated = $request->validate([
             'name'      => ['required', 'string', 'max:255'],
-            'telephone' => ['nullable', 'string', 'max:20'],
+            'telephone' => ['nullable', 'digits:8'],
+            'photo'     => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:2048'],
         ], [
-            'name.required' => 'Le nom est obligatoire.',
-            'name.max'      => 'Le nom ne peut pas dépasser 255 caractères.',
+            'name.required'    => 'Le nom est obligatoire.',
+            'name.max'         => 'Le nom ne peut pas dépasser 255 caractères.',
+            'telephone.digits' => 'Le numéro doit contenir exactement 8 chiffres (sans l\'indicatif).',
+            'photo.image'      => 'Le fichier doit être une image.',
+            'photo.mimes'      => 'Formats acceptés : JPG, PNG, WEBP.',
+            'photo.max'        => 'L\'image ne doit pas dépasser 2 Mo.',
         ]);
+
+        if (isset($validated['telephone'])) {
+            $validated['telephone'] = '+228 ' . $validated['telephone'];
+        }
+
+        if ($request->hasFile('photo')) {
+            if ($user->photo) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->photo);
+            }
+            $validated['photo'] = $request->file('photo')->store('avatars', 'public');
+        }
 
         $user->update($validated);
 

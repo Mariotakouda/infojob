@@ -21,10 +21,16 @@ class RegisterController extends Controller
     {
         $validated = $request->validated();
 
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('avatars', 'public');
+        }
+
         $user = User::create([
             'name'      => $validated['name'],
             'email'     => $validated['email'],
-            'telephone' => $validated['telephone'] ?? null,
+            'telephone' => isset($validated['telephone']) ? '+228 ' . $validated['telephone'] : null,
+            'photo'     => $photoPath,
             'role'      => $validated['role'],
             'password'  => Hash::make($validated['password']),
         ]);

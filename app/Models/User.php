@@ -16,6 +16,7 @@ class User extends Authenticatable
         'email',
         'password',
         'telephone',
+        'photo',
         'role',
         'two_factor_code',
         'two_factor_expires_at',
@@ -50,6 +51,14 @@ class User extends Authenticatable
     public function isCitoyen(): bool
     {
         return $this->role === 'citoyen';
+    }
+
+    /**
+     * URL publique de la photo de profil, ou null si l'utilisateur n'en a pas.
+     */
+    public function photoUrl(): ?string
+    {
+        return $this->photo ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->photo) : null;
     }
 
     // ─── Relations ──────────────────────────────────────────────────────────

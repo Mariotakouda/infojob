@@ -15,7 +15,7 @@
         </div>
 
         <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
-            <form method="POST" action="{{ route('register') }}" class="space-y-5">
+            <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="space-y-5">
                 @csrf
 
                 <div>
@@ -55,14 +55,51 @@
                     <label for="telephone" class="block text-sm font-medium text-gray-700 mb-1">
                         Téléphone <span class="text-gray-400 font-normal">(optionnel)</span>
                     </label>
-                    <input
-                        type="tel"
-                        id="telephone"
-                        name="telephone"
-                        value="{{ old('telephone') }}"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                        placeholder="+228 90 00 00 00"
-                    >
+                    <div class="flex rounded-lg border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-primary @error('telephone') border-red-400 @enderror">
+                        <span class="flex items-center gap-1.5 bg-gray-50 border-r border-gray-300 px-3 text-sm text-gray-600 select-none">
+                            <span class="text-base leading-none">🇹🇬</span> +228
+                        </span>
+                        <input
+                            type="tel"
+                            id="telephone"
+                            name="telephone"
+                            inputmode="numeric"
+                            autocomplete="tel-national"
+                            value="{{ old('telephone') }}"
+                            maxlength="8"
+                            pattern="[0-9]{8}"
+                            title="8 chiffres, sans le +228"
+                            class="w-full border-0 px-3 py-2.5 text-sm focus:outline-none focus:ring-0"
+                            placeholder="90 00 00 00"
+                        >
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1">Saisissez uniquement vos 8 chiffres, l'indicatif +228 est déjà pris en compte.</p>
+                    @error('telephone')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Photo de profil <span class="text-gray-400 font-normal">(optionnel)</span>
+                    </label>
+                    <div class="flex items-center gap-4">
+                        <img id="photo-preview" src="" alt=""
+                             class="hidden w-14 h-14 rounded-full object-cover border border-gray-200">
+                        <div id="photo-placeholder" class="w-14 h-14 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 shrink-0">
+                            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                            </svg>
+                        </div>
+                        <label class="cursor-pointer text-sm text-primary font-medium border border-gray-300 rounded-lg px-3 py-2 hover:bg-gray-50 transition-colors">
+                            Choisir une image
+                            <input type="file" name="photo" id="photo" accept="image/png,image/jpeg,image/webp" class="hidden" onchange="previewPhoto(this)">
+                        </label>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1">JPG, PNG ou WEBP, 2 Mo max.</p>
+                    @error('photo')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
@@ -154,6 +191,20 @@
 </div>
 
 <script>
+function previewPhoto(input) {
+    const preview = document.getElementById('photo-preview');
+    const placeholder = document.getElementById('photo-placeholder');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            preview.src = e.target.result;
+            preview.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
 function togglePassword(fieldId, btn) {
     const input  = document.getElementById(fieldId);
     const eyeOpen = btn.querySelector('.eye-open');

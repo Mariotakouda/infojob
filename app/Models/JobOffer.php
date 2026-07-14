@@ -17,6 +17,7 @@ class JobOffer extends Model
         'institution_id',
         'titre',
         'description',
+        'affiche',
         'type_contrat',
         'metier',
         'lieu',
@@ -141,6 +142,14 @@ class JobOffer extends Model
     public function metierLabel(): string
     {
         return $this->metier ?: 'Non précisé';
+    }
+
+    /**
+     * URL publique de l'affiche de l'offre, ou null si aucune n'a été fournie.
+     */
+    public function afficheUrl(): ?string
+    {
+        return $this->affiche ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->affiche) : null;
     }
 
     // ─── Relations ──────────────────────────────────────────────────────────

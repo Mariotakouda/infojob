@@ -90,6 +90,10 @@ class JobOfferController extends Controller
         // modération supplémentaire par offre.
         $validated['statut'] = 'publie';
 
+        if ($request->hasFile('affiche')) {
+            $validated['affiche'] = $request->file('affiche')->store('job-offers/affiches', 'public');
+        }
+
         JobOffer::create($validated);
 
         return redirect()->route('dashboard')
@@ -108,7 +112,19 @@ class JobOfferController extends Controller
     {
         Gate::authorize('manage', $jobOffer->institution);
 
-        $jobOffer->update($request->validated());
+        $validated = $request->validated();
+
+        if ($request->hasFile('affiche')) {
+            if ($jobOffer->affiche) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($jobOffer->affiche);
+            }
+            $validated['affiche'] = $request->file('affiche')->store('job-offers/affiches', 'public');
+        } elseif ($request->boolean('supprimer_affiche') && $jobOffer->affiche) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($jobOffer->affiche);
+            $validated['affiche'] = null;
+        }
+
+        $jobOffer->update($validated);
 
         return redirect()->route('dashboard')->with('success', 'Offre mise à jour.');
     }
@@ -116,6 +132,11 @@ class JobOfferController extends Controller
     public function destroy(JobOffer $jobOffer): RedirectResponse
     {
         Gate::authorize('manage', $jobOffer->institution);
+
+        if ($jobOffer->affiche) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($jobOffer->affiche);
+        }
+
         $jobOffer->delete();
 
         return redirect()->route('dashboard')->with('success', 'Offre supprimée.');
