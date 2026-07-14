@@ -55,11 +55,21 @@ class LoginController extends Controller
             $user = Auth::user();
 
             // ── 2FA uniquement pour admin et recruteur ───────────────────────
+            // Le code est envoyé via l'API HTTP de Brevo (voir BrevoMailer),
+            // pas en SMTP, car Render bloque les ports SMTP sortants.
             if (in_array($user->role, ['admin', 'recruteur'])) {
-                TwoFactorController::generateAndSendCode($user);
+                $sent = TwoFactorController::generateAndSendCode($user);
                 // L'URL mémorisée en session ('url.intended') est conservée
                 // et sera utilisée après validation du code 2FA.
-                return redirect()->route('two-factor.show');
+                $redirectResponse = redirect()->route('two-factor.show');
+
+                if (! $sent) {
+                    $redirectResponse->withErrors([
+                        'code' => "L'envoi du code a échoué. Cliquez sur \"Renvoyer le code\" pour réessayer.",
+                    ]);
+                }
+
+                return $redirectResponse;
             }
 
             // ── Citoyen : retour vers la page d'origine si connue ─────────────

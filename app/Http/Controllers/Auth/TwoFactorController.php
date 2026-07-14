@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Notifications\TwoFactorCodeNotification;
+use App\Services\BrevoMailer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +18,14 @@ class TwoFactorController extends Controller
 
     public function resend(Request $request): RedirectResponse
     {
-        $this->generateAndSendCode($request->user());
+        $sent = $this->generateAndSendCode($request->user());
+
+        if (! $sent) {
+            return back()->withErrors([
+                'code' => "L'envoi de l'email a échoué. Réessayez dans un instant ou contactez le support si le problème persiste.",
+            ]);
+        }
+
         return back()->with('status', 'Un nouveau code vous a été envoyé par email.');
     }
 
@@ -60,7 +67,7 @@ class TwoFactorController extends Controller
         return redirect()->intended($default);
     }
 
-    public static function generateAndSendCode(\App\Models\User $user): void
+    public static function generateAndSendCode(\App\Models\User $user): bool
     {
         $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
@@ -69,6 +76,18 @@ class TwoFactorController extends Controller
             'two_factor_expires_at' => now()->addMinutes(5),
         ]);
 
-        $user->notify(new TwoFactorCodeNotification($code));
+        $html = "<p>Bonjour {$user->name},</p>"
+            . "<p>Voici votre code de connexion à usage unique :</p>"
+            . "<h2 style=\"letter-spacing:4px;\">{$code}</h2>"
+            . "<p>Ce code est valable <strong>5 minutes</strong>.</p>"
+            . "<p>Si vous n'êtes pas à l'origine de cette demande, ignorez cet email et votre compte restera sécurisé.</p>"
+            . "<p>L'équipe TravailTogo</p>";
+
+        return BrevoMailer::send(
+            $user->email,
+            $user->name,
+            'Votre code de vérification — TravailTogo',
+            $html
+        );
     }
 }
