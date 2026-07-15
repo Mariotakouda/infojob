@@ -43,7 +43,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Compétences <span class="text-red-500">*</span></label>
                 <textarea name="competences" rows="3" required
                     class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">{{ old('competences', $jobApplication->competences) }}</textarea>
-                <p class="text-xs text-gray-400 mt-1">Séparez par des virgules.</p>
+                <p class="text-xs text-gray-400 mt-1">Listez ce que vous savez faire dans votre métier, séparé par des virgules (ex : "coupe, coloration" pour une coiffeuse, ou "vidange, freins" pour un mécanicien).</p>
             </div>
 
             <div>

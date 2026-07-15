@@ -40,9 +40,9 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Compétences <span class="text-red-500">*</span></label>
                 <textarea name="competences" rows="3" required
-                    placeholder="Séparez vos compétences par des virgules : PHP, Laravel, MySQL, Git..."
+                    placeholder="Ex : coupe, coloration, brushing — ou : câblage, dépannage électrique — ou : vidange, freins, diagnostic moteur..."
                     class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary @error('competences') border-red-400 @enderror">{{ old('competences') }}</textarea>
-                <p class="text-xs text-gray-400 mt-1">Séparez par des virgules pour créer des tags.</p>
+                <p class="text-xs text-gray-400 mt-1">Listez ce que vous savez faire dans votre métier, séparé par des virgules (ex : "coupe, coloration" pour une coiffeuse, ou "vidange, freins" pour un mécanicien).</p>
                 @error('competences')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
 
