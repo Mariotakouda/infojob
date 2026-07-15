@@ -34,10 +34,18 @@
                         </svg>
                     </div>
                 @endif
-                <label class="cursor-pointer text-sm text-primary font-medium border border-gray-300 rounded-lg px-3 py-2 hover:bg-gray-50 transition-colors">
-                    {{ $user->photo ? 'Changer la photo' : 'Ajouter une photo' }}
-                    <input type="file" name="photo" accept="image/png,image/jpeg,image/webp" class="hidden" onchange="this.form.requestSubmit()">
-                </label>
+                <div class="flex items-center gap-2">
+                    <label class="cursor-pointer text-sm text-primary font-medium border border-gray-300 rounded-lg px-3 py-2 hover:bg-gray-50 transition-colors">
+                        {{ $user->photo ? 'Changer la photo' : 'Ajouter une photo' }}
+                        <input type="file" name="photo" accept="image/png,image/jpeg,image/webp" class="hidden" onchange="this.form.requestSubmit()">
+                    </label>
+                    @if($user->photo)
+                        <button type="submit" form="delete-photo-form" onclick="return confirm('Supprimer votre photo de profil ?')"
+                            class="text-sm text-red-500 font-medium border border-red-200 rounded-lg px-3 py-2 hover:bg-red-50 transition-colors">
+                            Supprimer
+                        </button>
+                    @endif
+                </div>
             </div>
             @error('photo')
                 <p class="text-red-500 text-xs -mt-2">{{ $message }}</p>
@@ -88,7 +96,13 @@
                 </button>
             </div>
         </form>
+
+        <form id="delete-photo-form" method="POST" action="{{ route('profile.destroy-photo') }}" class="hidden">
+            @csrf
+            @method('DELETE')
+        </form>
     </div>
+
 
     {{-- ── Section 2 : Changer l'email ────────────────────────────────────── --}}
     <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm mb-6">

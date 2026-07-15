@@ -75,6 +75,7 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
     Route::prefix('mon-compte')->name('profile.')->group(function () {
         Route::get('/',               [ProfileController::class, 'edit'])->name('edit');
         Route::patch('/informations', [ProfileController::class, 'updateInfo'])->name('update-info');
+        Route::delete('/photo',       [ProfileController::class, 'destroyPhoto'])->name('destroy-photo');
         Route::patch('/email',        [ProfileController::class, 'updateEmail'])->name('update-email');
         Route::patch('/mot-de-passe', [ProfileController::class, 'updatePassword'])->name('update-password');
     });

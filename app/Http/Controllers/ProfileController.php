@@ -56,6 +56,21 @@ class ProfileController extends Controller
     }
 
     /**
+     * Supprime la photo de profil de l'utilisateur connecté.
+     */
+    public function destroyPhoto(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        if ($user->photo) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($user->photo);
+            $user->update(['photo' => null]);
+        }
+
+        return back()->with('success_info', 'Photo de profil supprimée.');
+    }
+
+    /**
      * Met à jour l'adresse email.
      */
     public function updateEmail(Request $request): RedirectResponse
