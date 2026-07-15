@@ -28,7 +28,7 @@
                         required
                         autofocus
                         class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent @error('name') border-red-400 @enderror"
-                        placeholder="Kofi Mensah"
+                        placeholder="Gnimdou esso"
                     >
                     @error('name')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -44,7 +44,7 @@
                         value="{{ old('email') }}"
                         required
                         class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent @error('email') border-red-400 @enderror"
-                        placeholder="kofi@exemple.com"
+                        placeholder="gnimdou@gmail.com"
                     >
                     @error('email')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
